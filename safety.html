@@ -58,6 +58,8 @@
             border-radius: 15px;
             font-size: 14px;
             line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         .message.user .message-content {
             background: #667eea;
@@ -68,18 +70,45 @@
             border: 1px solid #e5e7eb;
             color: #374151;
         }
-        
-        /* NEW: Style for links in AI messages */
+       
+        /* Enhanced styling for links in AI messages */
         .message.ai .message-content a {
             color: #667eea;
             text-decoration: underline;
             font-weight: 600;
             transition: color 0.3s ease;
+            word-break: break-all;
+            display: inline-block;
+            margin: 2px 0;
+            padding: 2px 4px;
+            background-color: rgba(102, 126, 234, 0.1);
+            border-radius: 4px;
         }
         .message.ai .message-content a:hover {
             color: #764ba2;
+            background-color: rgba(118, 75, 162, 0.1);
         }
-        
+
+        /* Style for full URL links */
+        .message.ai .message-content .url-link {
+            font-family: monospace;
+            font-size: 12px;
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 6px 8px;
+            margin: 4px 0;
+            display: block;
+            color: #1f2937;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .message.ai .message-content .url-link:hover {
+            background-color: #e5e7eb;
+            border-color: #667eea;
+            color: #667eea;
+        }
+       
         .chat-toggle {
             width: 60px;
             height: 60px;
@@ -136,6 +165,18 @@
         .hero-gradient {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+        /* Logo clickable styling */
+        .logo-link {
+            display: flex;
+            align-items: center;
+            space-x: 2;
+            text-decoration: none;
+            color: inherit;
+            transition: opacity 0.3s ease;
+        }
+        .logo-link:hover {
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -143,10 +184,11 @@
     <nav class="bg-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-2">
+                <!-- Made logo clickable -->
+                <a href="index.html" class="logo-link">
                     <i class="fas fa-heartbeat text-2xl text-indigo-600"></i>
-                    <span class="text-xl font-bold text-gray-800">MediCare Plus</span>
-                </div>
+                    <span class="text-xl font-bold text-gray-800 ml-2">MediCare Plus</span>
+                </a>
                 <div class="flex space-x-6">
                     <!-- Updated href attributes to point to new HTML files -->
                     <a href="index.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="home">Home</a>
@@ -163,7 +205,7 @@
         <section id="safety-content" class="page-section">
             <div class="max-w-7xl mx-auto px-4 py-12">
                 <h1 class="text-4xl font-bold text-gray-800 mb-8">Healthcare Safety Guidelines</h1>
-                
+               
                 <div class="grid md:grid-cols-2 gap-12">
                     <div>
                         <h2 class="text-2xl font-semibold text-indigo-600 mb-6">Medication Safety</h2>
@@ -188,7 +230,7 @@
                             </div>
                         </div>
                     </div>
-                    
+                   
                     <div>
                         <h2 class="text-2xl font-semibold text-indigo-600 mb-6">Patient Safety</h2>
                         <div class="space-y-4">
@@ -234,11 +276,11 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            
+           
             <div class="chat-messages" id="chatMessages">
                 <!-- Chat messages will be loaded here by JavaScript -->
             </div>
-            
+           
             <div class="typing-indicator message ai" id="typingIndicator">
                 <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm">
                     <i class="fas fa-robot"></i>
@@ -249,7 +291,7 @@
                     <div class="typing-dot"></div>
                 </div>
             </div>
-            
+           
             <div class="chat-input-area">
                 <div class="flex space-x-2">
                     <input type="text" id="chatInput" placeholder="Ask me about healthcare..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
@@ -265,7 +307,7 @@
                 </div>
             </div>
         </div>
-        
+       
         <button class="chat-toggle" onclick="(() => toggleChat())()" id="chatToggle">
             <i class="fas fa-comments"></i>
         </button>
@@ -330,7 +372,7 @@
             window.toggleChat = function() {
                 const widget = document.getElementById('chatWidget');
                 const toggle = document.getElementById('chatToggle');
-                
+               
                 if (widget) { // Null check for chatWidget
                     if (widget.style.display === 'none' || widget.style.display === '') {
                         widget.style.display = 'flex';
@@ -347,23 +389,23 @@
             window.sendMessage = async function() {
                 const input = document.getElementById('chatInput');
                 const message = input.value.trim();
-                
+               
                 if (!input) { // Null check for chatInput
                     console.error('Chat input element not found!');
                     return;
                 }
                 if (!message) return;
-                
+               
                 addMessage(message, 'user', true); // Save user message
                 input.value = '';
-                
+               
                 showTypingIndicator();
-                
+               
                 try {
                     const response = await callGeminiAPI(message);
                     hideTypingIndicator();
                     addMessage(response, 'ai', true); // Save AI response
-                    
+                   
                     // NEW: Check if the response contains navigation instructions and redirect if needed
                     checkForNavigation(response);
                 } catch (error) {
@@ -377,7 +419,7 @@
             function checkForNavigation(response) {
                 const navigationCommands = {
                     'NAVIGATE_TO_HOME': 'index.html',
-                    'NAVIGATE_TO_SAFETY': 'safety.html', 
+                    'NAVIGATE_TO_SAFETY': 'safety.html',
                     'NAVIGATE_TO_DOSAGE': 'dosage.html',
                     'NAVIGATE_TO_CONTACT': 'contact.html'
                 };
@@ -413,7 +455,7 @@
                 return data.response;
             }
 
-            // Modified addMessage to handle saving to history
+            // Enhanced addMessage function to handle URL formatting
             function addMessage(message, sender, saveToHistory = true) {
                 const messagesContainer = document.getElementById('chatMessages');
                 // Ensure messagesContainer exists before adding messages
@@ -424,31 +466,59 @@
 
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${sender}`;
-                
+               
                 const avatar = document.createElement('div');
                 avatar.className = 'w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm';
                 avatar.innerHTML = sender === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
-                
+               
                 const content = document.createElement('div');
                 content.className = 'message-content';
-                
-                // For AI messages, use innerHTML to render clickable links.
+               
+                // For AI messages, process URLs and use innerHTML to render clickable links
                 if (sender === 'ai') {
-                    content.innerHTML = message; 
+                    const processedMessage = processUrlsInMessage(message);
+                    content.innerHTML = processedMessage;
                 } else {
                     content.textContent = message;
                 }
-                
+               
                 messageDiv.appendChild(avatar);
                 messageDiv.appendChild(content);
                 messagesContainer.appendChild(messageDiv);
-                
+               
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
                 if (saveToHistory) {
                     chatHistory.push({ sender: sender, text: message });
                     saveChatHistory();
                 }
+            }
+
+            // New function to process URLs in messages
+            function processUrlsInMessage(message) {
+                // First, handle existing HTML links and preserve them
+                let processedMessage = message;
+                
+                // Find standalone URLs that aren't already in HTML tags
+                // This regex matches URLs that aren't already wrapped in <a> tags
+                const urlRegex = /(?<!href=['"])(https?:\/\/[^\s<>"']+)/gi;
+                
+                processedMessage = processedMessage.replace(urlRegex, (url) => {
+                    // Check if this URL is already inside an HTML tag
+                    const beforeUrl = processedMessage.substring(0, processedMessage.indexOf(url));
+                    const lastOpenTag = beforeUrl.lastIndexOf('<');
+                    const lastCloseTag = beforeUrl.lastIndexOf('>');
+                    
+                    // If we're inside an HTML tag, don't convert
+                    if (lastOpenTag > lastCloseTag) {
+                        return url;
+                    }
+                    
+                    // Convert standalone URLs to clickable links with full URL display
+                    return `<a href="${url}" class="url-link" target="_blank" rel="noopener noreferrer">${url}</a>`;
+                });
+                
+                return processedMessage;
             }
 
             function showTypingIndicator() {
@@ -474,7 +544,7 @@
             }
 
             function getWebsiteContext() {
-                // UPDATED: Enhanced prompt with navigation instructions
+                // UPDATED: Enhanced prompt with clearer URL formatting instructions
                 return `
                 You are MediCare Plus AI Assistant, a healthcare chatbot for our website.
                 The website has the following main pages:
@@ -483,27 +553,34 @@
                 - Dosage: dosage.html (Provides medication dosage information and a calculator for Acetaminophen, Ibuprofen, Amoxicillin)
                 - Contact: contact.html (Has contact form, address, phone, email, hours, social media links)
 
-                NAVIGATION RULES:
-                1. Your response MUST always include a brief, helpful summary related to the user's question.
-                2. If the user's question clearly relates to one of the specific website pages (Home, Safety, Dosage, Contact), you MUST embed a direct, clickable HTML link to that page within your summary. The link MUST be a standard HTML <a> tag with an 'href' attribute pointing to the correct .html file.
+                NAVIGATION AND LINK FORMATTING RULES:
+                1. Always provide a helpful summary first, then include relevant links.
+                
+                2. For internal website navigation, use HTML links like:
+                   <a href='safety.html'>Safety Page</a>
+                   <a href='dosage.html'>Dosage Page</a>
+                   <a href='contact.html'>Contact Page</a>
+                   <a href='index.html'>Home Page</a>
 
-                Here are examples of the EXACT HTML link format to use:
-                - For Safety: <a href='safety.html'>Safety Page</a>
-                - For Dosage: <a href='dosage.html'>Dosage Page</a>
-                - For Contact: <a href='contact.html'>Contact Page</a>
-                - For Home/General: <a href='index.html'>Home Page</a>
+                3. For external links, always include the FULL URL as plain text (not wrapped in HTML tags). The JavaScript will automatically convert these to clickable links. Examples:
+                   - https://www.cdc.gov/
+                   - https://www.w3.org/WAI/ER/PRACTICES/pdf/text-document.pdf
+                   - https://healthcare-ai-website.netlify.app/safety
 
-                3. REDIRECT FEATURE: If the user explicitly asks to be taken to a specific page (e.g., "take me to homepage", "go to safety page", "show me the contact form"), include the appropriate navigation command in your response:
-                - For Home: Include "NAVIGATE_TO_HOME" in your response
-                - For Safety: Include "NAVIGATE_TO_SAFETY" in your response
-                - For Dosage: Include "NAVIGATE_TO_DOSAGE" in your response
-                - For Contact: Include "NAVIGATE_TO_CONTACT" in your response
+                4. When referencing external resources, format your response like this:
+                   "Here's the information you requested: [summary text]
+                   
+                   For more detailed guidelines, you can visit:
+                   https://www.cdc.gov/medicationsafety/
+                   
+                   Additional resources:
+                   https://www.fda.gov/drugs/information-consumers-and-patients-drugs/"
 
-                Example response for "Please show the contact form":
-                "To contact us, please visit our <a href='contact.html'>Contact Page</a> where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links. We're here to help! Remember to consult with healthcare professionals for personalized medical advice."
-
-                Example response for "take me to the homepage":
-                "I'll take you to our <a href='index.html'>Home Page</a> right away! NAVIGATE_TO_HOME You'll find information about our healthcare services, AI assistant features, and an overview of all our offerings. Remember to consult with healthcare professionals for personalized medical advice."
+                5. REDIRECT FEATURE: If the user explicitly asks to be taken to a specific page, include the appropriate navigation command:
+                   - For Home: Include "NAVIGATE_TO_HOME" 
+                   - For Safety: Include "NAVIGATE_TO_SAFETY"
+                   - For Dosage: Include "NAVIGATE_TO_DOSAGE" 
+                   - For Contact: Include "NAVIGATE_TO_CONTACT"
 
                 Always remember to emphasize that users should consult healthcare professionals for personalized medical advice.
                 `;
