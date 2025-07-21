@@ -28,7 +28,7 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // ✨ Updated prompt with stricter instructions and formatting
+    // Updated prompt with stricter instructions and formatting
     const prompt = `${userContext}
 
 User question: ${message}
