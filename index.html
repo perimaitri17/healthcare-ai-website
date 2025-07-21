@@ -128,7 +128,6 @@
     </style>
 </head>
 <body class="bg-gray-50">
-    <!-- Navigation -->
     <nav class="bg-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center py-4">
@@ -137,20 +136,17 @@
                     <span class="text-xl font-bold text-gray-800">MediCare Plus</span>
                 </div>
                 <div class="flex space-x-6">
-                    <a href="#" class="nav-link active text-gray-700 hover:text-indigo-600 font-medium" data-page="home">Home</a>
-                    <a href="#" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="safety">Safety</a>
-                    <a href="#" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="dosage">Dosage</a>
-                    <a href="#" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="contact">Contact</a>
+                    <a href="#home" class="nav-link active text-gray-700 hover:text-indigo-600 font-medium" data-page="home">Home</a>
+                    <a href="#safety" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="safety">Safety</a>
+                    <a href="#dosage" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="dosage">Dosage</a>
+                    <a href="#contact" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="contact">Contact</a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
     <main class="min-h-screen">
-        <!-- Home Page -->
         <section id="home" class="page-section active">
-            <!-- Hero Section -->
             <div class="hero-gradient text-white py-20">
                 <div class="max-w-7xl mx-auto px-4 text-center">
                     <h1 class="text-5xl font-bold mb-6">Your Health, Our Priority</h1>
@@ -159,7 +155,6 @@
                 </div>
             </div>
 
-            <!-- Features Section -->
             <div class="py-16 bg-white">
                 <div class="max-w-7xl mx-auto px-4">
                     <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Our Healthcare Services</h2>
@@ -183,7 +178,6 @@
                 </div>
             </div>
 
-            <!-- Statistics Section -->
             <div class="bg-gray-100 py-16">
                 <div class="max-w-7xl mx-auto px-4">
                     <div class="grid md:grid-cols-4 gap-8 text-center">
@@ -208,7 +202,6 @@
             </div>
         </section>
 
-        <!-- Safety Page -->
         <section id="safety" class="page-section">
             <div class="max-w-7xl mx-auto px-4 py-12">
                 <h1 class="text-4xl font-bold text-gray-800 mb-8">Healthcare Safety Guidelines</h1>
@@ -270,7 +263,6 @@
             </div>
         </section>
 
-        <!-- Dosage Page -->
         <section id="dosage" class="page-section">
             <div class="max-w-7xl mx-auto px-4 py-12">
                 <h1 class="text-4xl font-bold text-gray-800 mb-8">Medication Dosage Information</h1>
@@ -365,7 +357,6 @@
             </div>
         </section>
 
-        <!-- Contact Page -->
         <section id="contact" class="page-section">
             <div class="max-w-7xl mx-auto px-4 py-12">
                 <h1 class="text-4xl font-bold text-gray-800 mb-8">Contact Us</h1>
@@ -451,7 +442,6 @@
         </section>
     </main>
 
-    <!-- AI Chatbot -->
     <div class="chat-container">
         <div class="chat-widget" id="chatWidget">
             <div class="chat-header">
@@ -459,7 +449,7 @@
                     <h3 class="font-semibold">MediCare AI Assistant</h3>
                     <p class="text-sm opacity-90">Healthcare Support</p>
                 </div>
-                <button onclick="toggleChat()" class="text-white hover:text-gray-200">
+                <button onclick="(() => toggleChat())()" class="text-white hover:text-gray-200">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -501,200 +491,210 @@
             </div>
         </div>
         
-        <button class="chat-toggle" onclick="toggleChat()" id="chatToggle">
+        <button class="chat-toggle" onclick="(() => toggleChat())()" id="chatToggle">
             <i class="fas fa-comments"></i>
         </button>
     </div>
 
     <script>
-        // Navigation functionality
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const page = e.target.getAttribute('data-page');
-                showPage(page);
+        // Place all JavaScript functions inside the DOMContentLoaded listener
+        // to ensure they are defined before any HTML elements try to call them.
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation functionality
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); // Prevent default anchor link behavior
+                    const page = e.target.getAttribute('data-page');
+                    showPage(page);
+                    
+                    // Update active nav link
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    e.target.classList.add('active');
+
+                    // Smooth scroll to the section
+                    document.getElementById(page).scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            function showPage(pageId) {
+                document.querySelectorAll('.page-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(pageId).classList.add('active');
+            }
+
+            // Dosage calculator
+            window.calculateDosage = function() { // Make it a global function
+                const weight = parseFloat(document.getElementById('weight').value);
+                const medication = document.getElementById('medication').value;
+                const resultDiv = document.getElementById('dosageResult');
+                const valueDiv = document.getElementById('dosageValue');
+
+                if (!weight || !medication) {
+                    alert('Please enter weight and select medication');
+                    return;
+                }
+
+                let dosage = '';
+                switch(medication) {
+                    case 'acetaminophen':
+                        dosage = `${(weight * 10).toFixed(0)}-${(weight * 15).toFixed(0)}mg every 4-6 hours`;
+                        break;
+                    case 'ibuprofen':
+                        dosage = `${(weight * 5).toFixed(0)}-${(weight * 10).toFixed(0)}mg every 6-8 hours`;
+                        break;
+                    case 'amoxicillin':
+                        dosage = `${(weight * 20).toFixed(0)}-${(weight * 40).toFixed(0)}mg per day (divided doses)`;
+                        break;
+                }
+
+                valueDiv.textContent = dosage;
+                resultDiv.classList.remove('hidden');
+            }
+
+            // Chat functionality
+            const GEMINI_API_KEY = 'AIzaSyBDBs9WhF46leK7tDfZA_UqznXjr-c0_Kg';
+            const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
+
+            // Define toggleChat in the global scope or ensure it's accessible
+            window.toggleChat = function() { // Make it a global function
+                const widget = document.getElementById('chatWidget');
+                const toggle = document.getElementById('chatToggle');
                 
-                // Update active nav link
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                e.target.classList.add('active');
-            });
-        });
-
-        function showPage(pageId) {
-            document.querySelectorAll('.page-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(pageId).classList.add('active');
-        }
-
-        // Dosage calculator
-        function calculateDosage() {
-            const weight = parseFloat(document.getElementById('weight').value);
-            const medication = document.getElementById('medication').value;
-            const resultDiv = document.getElementById('dosageResult');
-            const valueDiv = document.getElementById('dosageValue');
-
-            if (!weight || !medication) {
-                alert('Please enter weight and select medication');
-                return;
+                if (widget.style.display === 'none' || widget.style.display === '') {
+                    widget.style.display = 'flex';
+                    toggle.style.display = 'none';
+                } else {
+                    widget.style.display = 'none';
+                    toggle.style.display = 'flex';
+                }
             }
 
-            let dosage = '';
-            switch(medication) {
-                case 'acetaminophen':
-                    dosage = `${(weight * 10).toFixed(0)}-${(weight * 15).toFixed(0)}mg every 4-6 hours`;
-                    break;
-                case 'ibuprofen':
-                    dosage = `${(weight * 5).toFixed(0)}-${(weight * 10).toFixed(0)}mg every 6-8 hours`;
-                    break;
-                case 'amoxicillin':
-                    dosage = `${(weight * 20).toFixed(0)}-${(weight * 40).toFixed(0)}mg per day (divided doses)`;
-                    break;
+            // Define sendMessage as async
+            window.sendMessage = async function() { // Make it a global function
+                const input = document.getElementById('chatInput');
+                const message = input.value.trim();
+                
+                if (!message) return;
+                
+                addMessage(message, 'user');
+                input.value = '';
+                
+                showTypingIndicator();
+                
+                try {
+                    const response = await callGeminiAPI(message);
+                    hideTypingIndicator();
+                    addMessage(response, 'ai');
+                } catch (error) {
+                    hideTypingIndicator();
+                    addMessage('I apologize, but I\'m having trouble connecting right now. Please try again later or contact our support team at +91 11 2345 6789.', 'ai');
+                    console.error('Error:', error);
+                }
             }
 
-            valueDiv.textContent = dosage;
-            resultDiv.classList.remove('hidden');
-        }
-
-        // Chat functionality
-        const GEMINI_API_KEY = 'AIzaSyBDBs9WhF46leK7tDfZA_UqznXjr-c0_Kg';
-        const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
-
-        function toggleChat() {
-            const widget = document.getElementById('chatWidget');
-            const toggle = document.getElementById('chatToggle');
-            
-            if (widget.style.display === 'none' || widget.style.display === '') {
-                widget.style.display = 'flex';
-                toggle.style.display = 'none';
-            } else {
-                widget.style.display = 'none';
-                toggle.style.display = 'flex';
-            }
-        }
-
-        function getWebsiteContext() {
-            return `
-            You are MediCare Plus AI Assistant, a healthcare chatbot for our website. Here's the context about our services:
-
-            SAFETY INFORMATION:
-            - Medication storage: cool, dry places away from sunlight, in original containers
-            - Administration safety: verify patient identity, check expiration dates, confirm dosage
-            - Allergy management: maintain updated records, use identification systems
-            - Infection control: hand hygiene, PPE, sterile environments
-            - Emergency procedures: call emergency services immediately for medical emergencies
-
-            DOSAGE INFORMATION:
-            - Acetaminophen: Adults 325-650mg every 4-6 hours (max 3000mg/24h), Pediatric 10-15mg/kg every 4-6 hours
-            - Ibuprofen: Adults 200-400mg every 4-6 hours (max 1200mg/24h), Pediatric 5-10mg/kg every 6-8 hours
-            - Amoxicillin: Adults 250-500mg every 8 hours, Pediatric 20-40mg/kg/day divided
-
-            CONTACT INFORMATION:
-            - Address: 123 Healthcare Avenue, Medical District, Delhi 110001, India
-            - Phone: +91 11 2345 6789, Emergency: +91 11 9876 5432
-            - Email: info@medicareplus.com, support@medicareplus.com
-            - Hours: Mon-Fri 8AM-8PM, Weekend 9AM-5PM, Emergency 24/7
-
-            SERVICES:
-            - 24/7 AI-powered healthcare assistance
-            - Safety protocols and guidelines
-            - Medication dosage calculations
-            - Patient safety management
-            - Emergency support guidance
-
-            Always provide helpful, accurate healthcare information while emphasizing that users should consult healthcare professionals for personalized medical advice. Never provide specific medical diagnoses or replace professional medical care.
-            `;
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            
-            if (!message) return;
-            
-            addMessage(message, 'user');
-            input.value = '';
-            
-            showTypingIndicator();
-            
-            try {
-                const response = await callGeminiAPI(message);
-                hideTypingIndicator();
-                addMessage(response, 'ai');
-            } catch (error) {
-                hideTypingIndicator();
-                addMessage('I apologize, but I\'m having trouble connecting right now. Please try again later or contact our support team at +91 11 2345 6789.', 'ai');
-                console.error('Error:', error);
-            }
-        }
-
-        function sendPredefinedMessage(message) {
-            document.getElementById('chatInput').value = message;
-            sendMessage();
-        }
-
-        async function callGeminiAPI(userMessage) {
-    const context = getWebsiteContext();
-    
-    const response = await fetch('/.netlify/functions/gemini-chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            message: userMessage,
-            context: context
-        })
-    });
-
-    const data = await response.json();
-    return data.response;
-}
-            if (!response.ok) {
-                throw new Error(`API request failed: ${response.status}`);
-            }
-
-            const data = await response.json();
-            return data.candidates[0].content.parts[0].text;
-        }
-
-        function addMessage(message, sender) {
-            const messagesContainer = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}`;
-            
-            const avatar = document.createElement('div');
-            avatar.className = 'w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm';
-            avatar.innerHTML = sender === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
-            
-            const content = document.createElement('div');
-            content.className = 'message-content';
-            content.textContent = message;
-            
-            messageDiv.appendChild(avatar);
-            messageDiv.appendChild(content);
-            messagesContainer.appendChild(messageDiv);
-            
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-
-        function showTypingIndicator() {
-            document.getElementById('typingIndicator').style.display = 'flex';
-            const messagesContainer = document.getElementById('chatMessages');
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-
-        function hideTypingIndicator() {
-            document.getElementById('typingIndicator').style.display = 'none';
-        }
-
-        // Enter key support for chat
-        document.getElementById('chatInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
+            window.sendPredefinedMessage = function(message) { // Make it a global function
+                document.getElementById('chatInput').value = message;
                 sendMessage();
             }
-        });
 
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
+            async function callGeminiAPI(userMessage) {
+                const context = getWebsiteContext();
+                const prompt = `${context}\n\nUser question: ${userMessage}\n\nPlease provide a helpful healthcare-related response based on the context above.`;
+                
+                const response = await fetch(GEMINI_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API request failed: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+            }
+
+            function addMessage(message, sender) {
+                const messagesContainer = document.getElementById('chatMessages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+                
+                const avatar = document.createElement('div');
+                avatar.className = 'w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm';
+                avatar.innerHTML = sender === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+                
+                const content = document.createElement('div');
+                content.className = 'message-content';
+                content.textContent = message;
+                
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(content);
+                messagesContainer.appendChild(messageDiv);
+                
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            function showTypingIndicator() {
+                document.getElementById('typingIndicator').style.display = 'flex';
+                const messagesContainer = document.getElementById('chatMessages');
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            function hideTypingIndicator() {
+                document.getElementById('typingIndicator').style.display = 'none';
+            }
+
+            function getWebsiteContext() {
+                return `
+                You are MediCare Plus AI Assistant, a healthcare chatbot for our website. Here's the context about our services:
+
+                SAFETY INFORMATION:
+                - Medication storage: cool, dry places away from sunlight, in original containers
+                - Administration safety: verify patient identity, check expiration dates, confirm dosage
+                - Allergy management: maintain updated records, use identification systems
+                - Infection control: hand hygiene, PPE, sterile environments
+                - Emergency procedures: call emergency services immediately for medical emergencies
+
+                DOSAGE INFORMATION:
+                - Acetaminophen: Adults 325-650mg every 4-6 hours (max 3000mg/24h), Pediatric 10-15mg/kg every 4-6 hours
+                - Ibuprofen: Adults 200-400mg every 4-6 hours (max 1200mg/24h), Pediatric 5-10mg/kg every 6-8 hours
+                - Amoxicillin: Adults 250-500mg every 8 hours, Pediatric 20-40mg/kg/day divided
+
+                CONTACT INFORMATION:
+                - Address: 123 Healthcare Avenue, Medical District, Delhi 110001, India
+                - Phone: +91 11 2345 6789, Emergency: +91 11 9876 5432
+                - Email: info@medicareplus.com, support@medicareplus.com
+                - Hours: Mon-Fri 8AM-8PM, Weekend 9AM-5PM, Emergency 24/7
+
+                SERVICES:
+                - 24/7 AI-powered healthcare assistance
+                - Safety protocols and guidelines
+                - Medication dosage calculations
+                - Patient safety management
+                - Emergency support guidance
+
+                Always provide helpful, accurate healthcare information while emphasizing that users should consult healthcare professionals for personalized medical advice. Never provide specific medical diagnoses or replace professional medical care.
+                `;
+            }
+
+            // Enter key support for chat
+            document.getElementById('chatInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            // Initialize page
             showPage('home');
         });
     </script>
