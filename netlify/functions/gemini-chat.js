@@ -30,6 +30,14 @@ exports.handler = async (event, context) => {
       };
     }
 
+    // THIS IS THE KEY CHANGE: Modify the prompt to ask for a summary AND a link.
+    const prompt = `${userContext}
+
+User question: ${message}
+
+Please provide a brief, helpful summary related to the user's question, and if applicable, include a direct HTML link to the relevant page on the website. For example: "Here's a quick overview of safety. You can find more details on our <a href='safety.html'>Safety Page</a>."`;
+
+
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
       {
@@ -40,7 +48,7 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `${userContext}\n\nUser question: ${message}\n\nPlease provide a helpful healthcare-related response.`
+              text: prompt // Use the modified prompt here
             }]
           }],
           generationConfig: {
