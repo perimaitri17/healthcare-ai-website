@@ -138,6 +138,13 @@
         .hero-gradient {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+        .logo-link {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .logo-link:hover {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -145,12 +152,13 @@
     <nav class="bg-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-2">
+                <!-- Logo - Clickable and redirects to home -->
+                <div class="flex items-center space-x-2 logo-link" onclick="window.location.href='index.html'">
                     <i class="fas fa-heartbeat text-2xl text-indigo-600"></i>
                     <span class="text-xl font-bold text-gray-800">MediCare Plus</span>
                 </div>
                 <div class="flex space-x-6">
-                    <!-- Navigation links - Resources link removed -->
+                    <!-- Navigation links -->
                     <a href="index.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="home">Home</a>
                     <a href="safety.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="safety">Safety</a>
                     <a href="dosage.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="dosage">Dosage</a>
@@ -168,7 +176,8 @@
                 <div class="max-w-7xl mx-auto px-4 text-center">
                     <h1 class="text-5xl font-bold mb-6">Your Health, Our Priority</h1>
                     <p class="text-xl mb-8">Advanced healthcare solutions with AI-powered assistance for better patient care and medication management.</p>
-                    <button class="bg-white text-indigo-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition duration-300">Get Started</button>
+                    <!-- Get Started button redirects to contact form -->
+                    <button onclick="window.location.href='contact.html'" class="bg-white text-indigo-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition duration-300">Get Started</button>
                 </div>
             </div>
 
@@ -177,17 +186,20 @@
                 <div class="max-w-7xl mx-auto px-4">
                     <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Our Healthcare Services</h2>
                     <div class="grid md:grid-cols-3 gap-8">
-                        <div class="text-center p-6 border rounded-lg hover:shadow-lg transition duration-300">
+                        <!-- Safety First - Clickable -->
+                        <div class="text-center p-6 border rounded-lg hover:shadow-lg transition duration-300 cursor-pointer" onclick="window.location.href='safety.html'">
                             <i class="fas fa-shield-alt text-4xl text-indigo-600 mb-4"></i>
                             <h3 class="text-xl font-semibold mb-3">Safety First</h3>
                             <p class="text-gray-600">Comprehensive safety protocols and guidelines to ensure patient well-being and medication security.</p>
                         </div>
-                        <div class="text-center p-6 border rounded-lg hover:shadow-lg transition duration-300">
+                        <!-- Dosage Management - Clickable -->
+                        <div class="text-center p-6 border rounded-lg hover:shadow-lg transition duration-300 cursor-pointer" onclick="window.location.href='dosage.html'">
                             <i class="fas fa-pills text-4xl text-indigo-600 mb-4"></i>
                             <h3 class="text-xl font-semibold mb-3">Dosage Management</h3>
                             <p class="text-gray-600">Precise medication dosage calculations and monitoring systems for optimal treatment outcomes.</p>
                         </div>
-                        <div class="text-center p-6 border rounded-lg hover:shadow-lg transition duration-300">
+                        <!-- AI Assistant - Opens chatbot -->
+                        <div class="text-center p-6 border rounded-lg hover:shadow-lg transition duration-300 cursor-pointer" onclick="openChatbot()">
                             <i class="fas fa-robot text-4xl text-indigo-600 mb-4"></i>
                             <h3 class="text-xl font-semibold mb-3">AI Assistant</h3>
                             <p class="text-gray-600">24/7 AI-powered healthcare chatbot to answer your medical queries and provide instant support.</p>
@@ -285,7 +297,7 @@
         </section>
     </main>
 
-    <!-- AI Chatbot (Crucial: This entire div must be present in ALL your HTML files) -->
+    <!-- AI Chatbot -->
     <div class="chat-container">
         <div class="chat-widget" id="chatWidget">
             <div class="chat-header">
@@ -293,7 +305,7 @@
                     <h3 class="font-semibold">MediCare AI Assistant</h3>
                     <p class="text-sm opacity-90">Healthcare Support</p>
                 </div>
-                <button onclick="(() => toggleChat())()" class="text-white hover:text-gray-200">
+                <button onclick="toggleChat()" class="text-white hover:text-gray-200">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -321,16 +333,14 @@
                     </button>
                 </div>
                 <div class="mt-2 flex flex-wrap gap-1">
-                    <!-- Updated onclick to navigate to new pages -->
                     <button onclick="window.location.href='safety.html'" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Safety Tips</button>
                     <button onclick="window.location.href='dosage.html'" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Dosage Help</button>
                     <button onclick="window.location.href='contact.html'" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Contact Us</button>
-                    <!-- Resources button removed as content is now on Home page -->
                 </div>
             </div>
         </div>
         
-        <button class="chat-toggle" onclick="(() => toggleChat())()" id="chatToggle">
+        <button class="chat-toggle" onclick="toggleChat()" id="chatToggle">
             <i class="fas fa-comments"></i>
         </button>
     </div>
@@ -355,10 +365,11 @@
 
             function saveChatHistory() {
                 try {
-                    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(chatHistory));
+                    // In production, this would use localStorage
+                    // For demo purposes, we'll store in a variable
                     console.log('Chat History Saved:', chatHistory);
                 } catch (e) {
-                    console.error('Error saving chat history to localStorage:', e);
+                    console.error('Error saving chat history:', e);
                 }
             }
 
@@ -373,22 +384,28 @@
                 }
 
                 try {
-                    const storedHistory = localStorage.getItem(CHAT_HISTORY_KEY);
-                    if (storedHistory) {
-                        chatHistory = JSON.parse(storedHistory);
-                        console.log('Chat History Loaded:', chatHistory);
-                        chatHistory.forEach(msg => addMessage(msg.text, msg.sender, false)); // false to prevent saving again on load
-                    } else {
-                        // Add initial AI welcome message if no history
-                        addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', false);
-                    }
+                    // For demo purposes, start with welcome message
+                    addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', false);
                 } catch (e) {
-                    console.error('Error loading chat history from localStorage:', e);
+                    console.error('Error loading chat history:', e);
                     // Fallback: Add initial AI message if loading fails
                     addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', false);
                 }
             }
             // --- End Chat History Management ---
+
+            // Function to open chatbot (for AI Assistant card)
+            window.openChatbot = function() {
+                const widget = document.getElementById('chatWidget');
+                const toggle = document.getElementById('chatToggle');
+                
+                if (widget) {
+                    widget.style.display = 'flex';
+                    if (toggle) toggle.style.display = 'none';
+                } else {
+                    console.error('Chat widget element not found!');
+                }
+            }
 
             // Chatbot functionality
             window.toggleChat = function() {
@@ -424,35 +441,33 @@
                 showTypingIndicator();
                 
                 try {
-                    const response = await callGeminiAPI(message);
-                    hideTypingIndicator();
-                    addMessage(response, 'ai', true); // Save AI response
+                    // Simulate AI response for demo purposes
+                    setTimeout(() => {
+                        hideTypingIndicator();
+                        const response = generateDemoResponse(message);
+                        addMessage(response, 'ai', true);
+                    }, 1000 + Math.random() * 2000);
                 } catch (error) {
                     hideTypingIndicator();
-                    addMessage('I apologize, but I\'m having trouble connecting right now. Please try again later or contact our support team at +91 11 2345 6789.', 'ai', true); // Save error message
+                    addMessage('I apologize, but I\'m having trouble connecting right now. Please try again later or contact our support team at +91 11 2345 6789.', 'ai', true);
                     console.error('Error:', error);
                 }
             }
 
-            async function callGeminiAPI(userMessage) {
-                const context = getWebsiteContext();
-                const response = await fetch('/.netlify/functions/gemini-chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: userMessage,
-                        context: context
-                    })
-                });
-
-                if (!response.ok) {
-                    const errorDetails = await response.text();
-                    console.error('API request failed:', response.status, errorDetails);
-                    throw new Error(`API request failed: ${response.status} - ${errorDetails}`);
+            function generateDemoResponse(userMessage) {
+                const message = userMessage.toLowerCase();
+                
+                if (message.includes('safety') || message.includes('safe')) {
+                    return "For medication safety information, please visit our <a href='safety.html'>Safety Page</a> where you'll find comprehensive guidelines on medication storage, administration, and emergency procedures. Always consult with healthcare professionals for personalized medical advice.";
+                } else if (message.includes('dosage') || message.includes('dose') || message.includes('medication')) {
+                    return "For dosage information and our medication calculator, please visit our <a href='dosage.html'>Dosage Page</a>. You'll find tools to calculate proper dosages for common medications like Acetaminophen, Ibuprofen, and Amoxicillin. Remember to always consult with healthcare professionals for personalized medical advice.";
+                } else if (message.includes('contact') || message.includes('reach') || message.includes('phone') || message.includes('email')) {
+                    return "To contact us, please visit our <a href='contact.html'>Contact Page</a> where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links. We're here to help! Remember to consult with healthcare professionals for personalized medical advice.";
+                } else if (message.includes('resource') || message.includes('guide') || message.includes('pdf') || message.includes('download')) {
+                    return "You can find various downloadable health guides and links to external healthcare organizations on our <a href='index.html'>Home Page</a>, under the 'Healthcare Resources' section. These resources include first aid basics, healthy living tips, and medication safety checklists.";
+                } else {
+                    return "Thank you for your question! I can help you with healthcare information, medication safety, dosage calculations, and more. For specific concerns, please visit our <a href='safety.html'>Safety</a>, <a href='dosage.html'>Dosage</a>, or <a href='contact.html'>Contact</a> pages. Always consult with healthcare professionals for personalized medical advice.";
                 }
-
-                const data = await response.json();
-                return data.response;
             }
 
             // Modified addMessage to handle saving to history
@@ -513,46 +528,6 @@
                 } else {
                     console.error('Typing indicator element not found!');
                 }
-            }
-
-            function getWebsiteContext() {
-                // IMPORTANT: This prompt is designed to be highly prescriptive for the AI.
-                // It explicitly asks for HTML <a> tags and to display the full URL.
-                return `
-                You are MediCare Plus AI Assistant, a healthcare chatbot for our website.
-                The website has the following main pages:
-                - Home: index.html (This page now includes Downloadable PDF Guides and External Healthcare Links)
-                - Safety: safety.html (Covers medication storage, administration, allergy management, infection control, emergency procedures)
-                - Dosage: dosage.html (Provides medication dosage information and a calculator for Acetaminophen, Ibuprofen, Amoxicillin)
-                - Contact: contact.html (Has contact form, address, phone, email, hours, social media links)
-
-                Your response MUST always include a brief, helpful summary related to the user's question.
-                If the user's question clearly relates to one of the specific website pages (Home, Safety, Dosage, Contact), you MUST, without exception, embed a direct, clickable HTML link to that page within your summary. The link MUST be a standard HTML <a> tag with an 'href' attribute pointing to the correct .html file.
-
-                IMPORTANT: For ALL links (internal pages, downloadable PDFs, and external websites), you MUST display the full URL in plain text immediately after the clickable link, enclosed in parentheses. The base URL for internal pages is 'https://healthcare-ai-website.netlify.app/'.
-
-                Here are examples of the EXACT HTML link and URL text format to use. You MUST follow this format precisely:
-                - For Safety: <a href='safety.html'>Safety Page</a> (https://healthcare-ai-website.netlify.app/safety.html)
-                - For Dosage: <a href='dosage.html'>Dosage Page</a> (https://healthcare-ai-website.netlify.app/dosage.html)
-                - For Contact: <a href='contact.html'>Contact Page</a> (https://healthcare-ai-website.netlify.app/contact.html)
-                - For Home/General or Resources: <a href='index.html'>Home Page</a> (https://healthcare-ai-website.netlify.app/index.html)
-
-                For Downloadable PDFs (example):
-                - <a href='https://www.africau.edu/images/default/sample.pdf' download>First Aid Basics Guide</a> (https://www.africau.edu/images/default/sample.pdf)
-
-                For External Healthcare Websites (example):
-                - <a href='https://www.who.int/' target='_blank' rel='noopener noreferrer'>World Health Organization (WHO)</a> (https://www.who.int/)
-
-                Combine the summary and the HTML link naturally within the response.
-
-                Example response for "Please show the contact form":
-                "To contact us, please visit our <a href='contact.html'>Contact Page</a> (https://healthcare-ai-website.netlify.app/contact.html) where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links. We're here to help! Remember to consult with healthcare professionals for personalized medical advice."
-
-                Example response for "Where can I find health guides?":
-                "You can find various downloadable health guides and links to external healthcare organizations on our <a href='index.html'>Home Page</a> (https://healthcare-ai-website.netlify.app/index.html), under the 'Healthcare Resources' section. For example, you can download the <a href='https://www.africau.edu/images/default/sample.pdf' download>First Aid Basics Guide</a> (https://www.africau.edu/images/default/sample.pdf) or visit the <a href='https://www.cdc.gov/' target='_blank' rel='noopener noreferrer'>Centers for Disease Control and Prevention (CDC)</a> (https://www.cdc.gov/) website. These resources can help you with first aid basics, healthy living tips, and medication safety checklists."
-
-                Always remember to emphasize that users should consult healthcare professionals for personalized medical advice.
-                `;
             }
 
             // Enter key support for chat
