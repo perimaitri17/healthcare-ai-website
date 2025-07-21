@@ -13,6 +13,7 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    // Ensure you are parsing the event body correctly
     const { message, context: userContext } = JSON.parse(event.body);
     const API_KEY = process.env.GEMINI_API_KEY;
 
@@ -28,28 +29,8 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Updated prompt with stricter instructions and formatting
-    const prompt = `${userContext}
-
-User question: ${message}
-
-=== Instructions ===
-1. Provide a helpful, concise summary answering the user's question include an HTML link to that page.
-2. If the question clearly relates to a specific page (Home, Safety, Dosage, or Contact), include an HTML link to that page.
-3. Use this exact format for links:
-   - Safety: <a href='safety.html'>Safety Page</a>
-   - Dosage: <a href='dosage.html'>Dosage Page</a>
-   - Contact: <a href='contact.html'>Contact Page</a>
-   - Home: <a href='index.html'>Home Page</a>
-4. Combine the summary and the HTML link naturally in one paragraph.
-5. Always include a note encouraging users to consult healthcare professionals for personalized medical advice.
-
-=== Output Example ===
-To get dosage instructions, please visit our <a href='dosage.html'>Dosage Page</a>. It contains dosage guidelines and recommendations. Always consult a healthcare professional for personalized medical advice.
-
-==============================
-Now write your answer below:
-`;
+    // The prompt is constructed using the userContext received from the client
+    const prompt = `${userContext}\n\nUser question: ${message}`;
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
@@ -68,7 +49,7 @@ Now write your answer below:
             temperature: 0.7,
             topK: 40,
             topP: 0.95,
-            maxOutputTokens: 1024
+            maxOutputTokens: 1024,
           }
         })
       }
@@ -82,15 +63,10 @@ Now write your answer below:
 
     const data = await response.json();
 
-    const geminiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-    if (!geminiText) {
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
       console.error('Unexpected API response structure from Gemini:', JSON.stringify(data, null, 2));
       throw new Error('Unexpected API response structure from Gemini.');
     }
-
-    // Optional debug log
-    console.log('Gemini response:', geminiText);
 
     return {
       statusCode: 200,
@@ -101,7 +77,7 @@ Now write your answer below:
         'Access-Control-Allow-Methods': 'POST, OPTIONS'
       },
       body: JSON.stringify({
-        response: geminiText
+        response: data.candidates[0].content.parts[0].text
       })
     };
 
