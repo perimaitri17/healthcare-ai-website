@@ -208,7 +208,7 @@
         </section>
     </main>
 
-    <!-- AI Chatbot (repeated on all pages) -->
+    <!-- AI Chatbot (Crucial: This entire div must be present in ALL your HTML files) -->
     <div class="chat-container">
         <div class="chat-widget" id="chatWidget">
             <div class="chat-header">
@@ -276,16 +276,37 @@
             let chatHistory = []; // Array to store message objects {sender: 'user'/'ai', text: 'message'}
 
             function saveChatHistory() {
-                localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(chatHistory));
+                try {
+                    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(chatHistory));
+                    console.log('Chat History Saved:', chatHistory);
+                } catch (e) {
+                    console.error('Error saving chat history to localStorage:', e);
+                }
             }
 
             function loadChatHistory() {
-                const storedHistory = localStorage.getItem(CHAT_HISTORY_KEY);
-                if (storedHistory) {
-                    chatHistory = JSON.parse(storedHistory);
-                    chatHistory.forEach(msg => addMessage(msg.text, msg.sender, false)); // false to prevent saving again on load
+                const messagesContainer = document.getElementById('chatMessages');
+                // Ensure messagesContainer exists before clearing its content
+                if (messagesContainer) {
+                    messagesContainer.innerHTML = ''; // Clear existing messages before loading
                 } else {
-                    // Add initial AI welcome message if no history
+                    console.error('Chat messages container not found!');
+                    return; // Exit if container is missing
+                }
+
+                try {
+                    const storedHistory = localStorage.getItem(CHAT_HISTORY_KEY);
+                    if (storedHistory) {
+                        chatHistory = JSON.parse(storedHistory);
+                        console.log('Chat History Loaded:', chatHistory);
+                        chatHistory.forEach(msg => addMessage(msg.text, msg.sender, false)); // false to prevent saving again on load
+                    } else {
+                        // Add initial AI welcome message if no history
+                        addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', false);
+                    }
+                } catch (e) {
+                    console.error('Error loading chat history from localStorage:', e);
+                    // Fallback: Add initial AI message if loading fails
                     addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', false);
                 }
             }
@@ -296,12 +317,16 @@
                 const widget = document.getElementById('chatWidget');
                 const toggle = document.getElementById('chatToggle');
                 
-                if (widget.style.display === 'none' || widget.style.display === '') {
-                    widget.style.display = 'flex';
-                    toggle.style.display = 'none';
+                if (widget) { // Null check for chatWidget
+                    if (widget.style.display === 'none' || widget.style.display === '') {
+                        widget.style.display = 'flex';
+                        if (toggle) toggle.style.display = 'none'; // Only hide toggle if it exists
+                    } else {
+                        widget.style.display = 'none';
+                        if (toggle) toggle.style.display = 'flex'; // Only show toggle if it exists
+                    }
                 } else {
-                    widget.style.display = 'none';
-                    toggle.style.display = 'flex';
+                    console.error('Chat widget element not found!');
                 }
             }
 
@@ -309,6 +334,10 @@
                 const input = document.getElementById('chatInput');
                 const message = input.value.trim();
                 
+                if (!input) { // Null check for chatInput
+                    console.error('Chat input element not found!');
+                    return;
+                }
                 if (!message) return;
                 
                 addMessage(message, 'user', true); // Save user message
@@ -351,6 +380,12 @@
             // Modified addMessage to handle saving to history
             function addMessage(message, sender, saveToHistory = true) {
                 const messagesContainer = document.getElementById('chatMessages');
+                // Ensure messagesContainer exists before adding messages
+                if (!messagesContainer) {
+                    console.error('Chat messages container not found when trying to add message!');
+                    return;
+                }
+
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${sender}`;
                 
@@ -381,13 +416,25 @@
             }
 
             function showTypingIndicator() {
-                document.getElementById('typingIndicator').style.display = 'flex';
+                const typingIndicator = document.getElementById('typingIndicator');
+                if (typingIndicator) {
+                    typingIndicator.style.display = 'flex';
+                } else {
+                    console.error('Typing indicator element not found!');
+                }
                 const messagesContainer = document.getElementById('chatMessages');
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                if (messagesContainer) {
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }
             }
 
             function hideTypingIndicator() {
-                document.getElementById('typingIndicator').style.display = 'none';
+                const typingIndicator = document.getElementById('typingIndicator');
+                if (typingIndicator) {
+                    typingIndicator.style.display = 'none';
+                } else {
+                    console.error('Typing indicator element not found!');
+                }
             }
 
             function getWebsiteContext() {
@@ -420,11 +467,16 @@
             }
 
             // Enter key support for chat
-            document.getElementById('chatInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    sendMessage();
-                }
-            });
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) { // Added null check
+                chatInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            } else {
+                console.error("Chat input element not found, cannot attach keypress listener!");
+            }
 
             // Load chat history when the page loads
             loadChatHistory();
