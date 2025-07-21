@@ -2,10 +2,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediCare Plus - Healthcare Solutions</title>
+    <title>MediCare Plus - Home</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* Shared styles for chat and navigation */
         .chat-container {
             position: fixed;
             bottom: 20px;
@@ -108,11 +109,9 @@
             0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
             40% { transform: scale(1); opacity: 1; }
         }
+        /* Page specific styles - only for active page */
         .page-section {
-            display: none;
-        }
-        .page-section.active {
-            display: block;
+            display: block; /* All sections are always visible on their own page */
         }
         .nav-link {
             transition: all 0.3s ease;
@@ -128,6 +127,7 @@
     </style>
 </head>
 <body class="bg-gray-50">
+    <!-- Navigation -->
     <nav class="bg-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center py-4">
@@ -136,17 +136,20 @@
                     <span class="text-xl font-bold text-gray-800">MediCare Plus</span>
                 </div>
                 <div class="flex space-x-6">
-                    <a href="#home" class="nav-link active text-gray-700 hover:text-indigo-600 font-medium" data-page="home">Home</a>
-                    <a href="#safety" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="safety">Safety</a>
-                    <a href="#dosage" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="dosage">Dosage</a>
-                    <a href="#contact" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="contact">Contact</a>
+                    <!-- Updated href attributes to point to new HTML files -->
+                    <a href="index.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="home">Home</a>
+                    <a href="safety.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="safety">Safety</a>
+                    <a href="dosage.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="dosage">Dosage</a>
+                    <a href="contact.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="contact">Contact</a>
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- Main Content for Home Page -->
     <main class="min-h-screen">
-        <section id="home" class="page-section active">
+        <section id="home-content" class="page-section">
+            <!-- Hero Section -->
             <div class="hero-gradient text-white py-20">
                 <div class="max-w-7xl mx-auto px-4 text-center">
                     <h1 class="text-5xl font-bold mb-6">Your Health, Our Priority</h1>
@@ -155,6 +158,7 @@
                 </div>
             </div>
 
+            <!-- Features Section -->
             <div class="py-16 bg-white">
                 <div class="max-w-7xl mx-auto px-4">
                     <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Our Healthcare Services</h2>
@@ -178,6 +182,7 @@
                 </div>
             </div>
 
+            <!-- Statistics Section -->
             <div class="bg-gray-100 py-16">
                 <div class="max-w-7xl mx-auto px-4">
                     <div class="grid md:grid-cols-4 gap-8 text-center">
@@ -201,247 +206,9 @@
                 </div>
             </div>
         </section>
-
-        <section id="safety" class="page-section">
-            <div class="max-w-7xl mx-auto px-4 py-12">
-                <h1 class="text-4xl font-bold text-gray-800 mb-8">Healthcare Safety Guidelines</h1>
-                
-                <div class="grid md:grid-cols-2 gap-12">
-                    <div>
-                        <h2 class="text-2xl font-semibold text-indigo-600 mb-6">Medication Safety</h2>
-                        <div class="space-y-4">
-                            <div class="bg-white p-6 rounded-lg shadow">
-                                <h3 class="font-semibold text-lg mb-3">Storage Guidelines</h3>
-                                <ul class="text-gray-600 space-y-2">
-                                    <li>• Store medications in cool, dry places away from direct sunlight</li>
-                                    <li>• Keep medications in original containers with labels</li>
-                                    <li>• Store at recommended temperature ranges</li>
-                                    <li>• Keep away from children and pets</li>
-                                </ul>
-                            </div>
-                            <div class="bg-white p-6 rounded-lg shadow">
-                                <h3 class="font-semibold text-lg mb-3">Administration Safety</h3>
-                                <ul class="text-gray-600 space-y-2">
-                                    <li>• Always verify patient identity before administration</li>
-                                    <li>• Check medication expiration dates</li>
-                                    <li>• Confirm correct dosage and route</li>
-                                    <li>• Document administration immediately</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h2 class="text-2xl font-semibold text-indigo-600 mb-6">Patient Safety</h2>
-                        <div class="space-y-4">
-                            <div class="bg-white p-6 rounded-lg shadow">
-                                <h3 class="font-semibold text-lg mb-3">Allergy Management</h3>
-                                <ul class="text-gray-600 space-y-2">
-                                    <li>• Maintain updated allergy records</li>
-                                    <li>• Use clear allergy identification systems</li>
-                                    <li>• Cross-check medications against known allergies</li>
-                                    <li>• Have emergency protocols ready</li>
-                                </ul>
-                            </div>
-                            <div class="bg-white p-6 rounded-lg shadow">
-                                <h3 class="font-semibold text-lg mb-3">Infection Control</h3>
-                                <ul class="text-gray-600 space-y-2">
-                                    <li>• Follow strict hand hygiene protocols</li>
-                                    <li>• Use appropriate personal protective equipment</li>
-                                    <li>• Maintain sterile environments when required</li>
-                                    <li>• Regular equipment sterilization</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-12 bg-red-50 p-6 rounded-lg border-l-4 border-red-400">
-                    <h3 class="text-lg font-semibold text-red-800 mb-3">Emergency Procedures</h3>
-                    <p class="text-red-700">In case of medical emergencies, always call emergency services immediately. Our AI chatbot can provide basic guidance, but it cannot replace professional medical care in emergency situations.</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="dosage" class="page-section">
-            <div class="max-w-7xl mx-auto px-4 py-12">
-                <h1 class="text-4xl font-bold text-gray-800 mb-8">Medication Dosage Information</h1>
-                
-                <div class="grid lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-2">
-                        <h2 class="text-2xl font-semibold text-indigo-600 mb-6">Common Medications</h2>
-                        
-                        <div class="space-y-6">
-                            <div class="bg-white p-6 rounded-lg shadow">
-                                <h3 class="font-semibold text-lg mb-4 text-gray-800">Acetaminophen (Tylenol)</h3>
-                                <div class="grid md:grid-cols-2 gap-4">
-                                    <div>
-                                        <p class="text-sm text-gray-600 mb-2">Adult Dosage:</p>
-                                        <p class="font-medium">325-650mg every 4-6 hours</p>
-                                        <p class="text-sm text-gray-600 mt-1">Maximum: 3000mg/24 hours</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm text-gray-600 mb-2">Pediatric Dosage:</p>
-                                        <p class="font-medium">10-15mg/kg every 4-6 hours</p>
-                                        <p class="text-sm text-gray-600 mt-1">Consult pediatrician for children under 2</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="bg-white p-6 rounded-lg shadow">
-                                <h3 class="font-semibold text-lg mb-4 text-gray-800">Ibuprofen (Advil/Motrin)</h3>
-                                <div class="grid md:grid-cols-2 gap-4">
-                                    <div>
-                                        <p class="text-sm text-gray-600 mb-2">Adult Dosage:</p>
-                                        <p class="font-medium">200-400mg every 4-6 hours</p>
-                                        <p class="text-sm text-gray-600 mt-1">Maximum: 1200mg/24 hours</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm text-gray-600 mb-2">Pediatric Dosage:</p>
-                                        <p class="font-medium">5-10mg/kg every 6-8 hours</p>
-                                        <p class="text-sm text-gray-600 mt-1">Not for children under 6 months</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="bg-white p-6 rounded-lg shadow">
-                                <h3 class="font-semibold text-lg mb-4 text-gray-800">Amoxicillin (Antibiotic)</h3>
-                                <div class="grid md:grid-cols-2 gap-4">
-                                    <div>
-                                        <p class="text-sm text-gray-600 mb-2">Adult Dosage:</p>
-                                        <p class="font-medium">250-500mg every 8 hours</p>
-                                        <p class="text-sm text-gray-600 mt-1">Complete full course as prescribed</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm text-gray-600 mb-2">Pediatric Dosage:</p>
-                                        <p class="font-medium">20-40mg/kg/day divided</p>
-                                        <p class="text-sm text-gray-600 mt-1">Prescription required</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h2 class="text-2xl font-semibold text-indigo-600 mb-6">Dosage Calculator</h2>
-                        <div class="bg-white p-6 rounded-lg shadow">
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Patient Weight (kg)</label>
-                                    <input type="number" id="weight" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Medication</label>
-                                    <select id="medication" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                        <option value="">Select medication</option>
-                                        <option value="acetaminophen">Acetaminophen</option>
-                                        <option value="ibuprofen">Ibuprofen</option>
-                                        <option value="amoxicillin">Amoxicillin</option>
-                                    </select>
-                                </div>
-                                <button onclick="calculateDosage()" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300">Calculate Dosage</button>
-                                <div id="dosageResult" class="mt-4 p-3 bg-gray-50 rounded-md hidden">
-                                    <p class="text-sm font-medium text-gray-800">Recommended Dosage:</p>
-                                    <p id="dosageValue" class="text-lg font-semibold text-indigo-600"></p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6 bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-400">
-                            <p class="text-sm text-yellow-800">
-                                <strong>Disclaimer:</strong> This calculator provides general guidelines only. Always consult with a healthcare professional for accurate dosing.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="contact" class="page-section">
-            <div class="max-w-7xl mx-auto px-4 py-12">
-                <h1 class="text-4xl font-bold text-gray-800 mb-8">Contact Us</h1>
-                
-                <div class="grid lg:grid-cols-2 gap-12">
-                    <div>
-                        <h2 class="text-2xl font-semibold text-indigo-600 mb-6">Get in Touch</h2>
-                        <form class="space-y-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                                <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                                <input type="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                                <input type="tel" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
-                                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                    <option>General Inquiry</option>
-                                    <option>Medical Consultation</option>
-                                    <option>Technical Support</option>
-                                    <option>Partnership</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
-                                <textarea rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                            </div>
-                            <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300">Send Message</button>
-                        </form>
-                    </div>
-                    
-                    <div>
-                        <h2 class="text-2xl font-semibold text-indigo-600 mb-6">Contact Information</h2>
-                        <div class="space-y-6">
-                            <div class="flex items-start space-x-4">
-                                <i class="fas fa-map-marker-alt text-indigo-600 mt-1"></i>
-                                <div>
-                                    <h3 class="font-semibold text-gray-800">Address</h3>
-                                    <p class="text-gray-600">123 Healthcare Avenue<br>Medical District, Delhi 110001<br>India</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start space-x-4">
-                                <i class="fas fa-phone text-indigo-600 mt-1"></i>
-                                <div>
-                                    <h3 class="font-semibold text-gray-800">Phone</h3>
-                                    <p class="text-gray-600">+91 11 2345 6789<br>Emergency: +91 11 9876 5432</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start space-x-4">
-                                <i class="fas fa-envelope text-indigo-600 mt-1"></i>
-                                <div>
-                                    <h3 class="font-semibold text-gray-800">Email</h3>
-                                    <p class="text-gray-600">info@medicareplus.com<br>support@medicareplus.com</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start space-x-4">
-                                <i class="fas fa-clock text-indigo-600 mt-1"></i>
-                                <div>
-                                    <h3 class="font-semibold text-gray-800">Hours</h3>
-                                    <p class="text-gray-600">Monday - Friday: 8:00 AM - 8:00 PM<br>Weekend: 9:00 AM - 5:00 PM<br>Emergency: 24/7</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-8">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Follow Us</h3>
-                            <div class="flex space-x-4">
-                                <a href="#" class="text-indigo-600 hover:text-indigo-800 text-2xl"><i class="fab fa-facebook"></i></a>
-                                <a href="#" class="text-indigo-600 hover:text-indigo-800 text-2xl"><i class="fab fa-twitter"></i></a>
-                                <a href="#" class="text-indigo-600 hover:text-indigo-800 text-2xl"><i class="fab fa-linkedin"></i></a>
-                                <a href="#" class="text-indigo-600 hover:text-indigo-800 text-2xl"><i class="fab fa-instagram"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
+    <!-- AI Chatbot (repeated on all pages) -->
     <div class="chat-container">
         <div class="chat-widget" id="chatWidget">
             <div class="chat-header">
@@ -484,9 +251,10 @@
                     </button>
                 </div>
                 <div class="mt-2 flex flex-wrap gap-1">
-                    <button onclick="sendPredefinedMessage('Tell me about medication safety')" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Safety Tips</button>
-                    <button onclick="sendPredefinedMessage('How to calculate dosage?')" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Dosage Help</button>
-                    <button onclick="sendPredefinedMessage('Emergency procedures')" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Emergency</button>
+                    <!-- Updated onclick to navigate to new pages -->
+                    <button onclick="window.location.href='safety.html'" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Safety Tips</button>
+                    <button onclick="window.location.href='dosage.html'" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Dosage Help</button>
+                    <button onclick="window.location.href='contact.html'" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Contact Us</button>
                 </div>
             </div>
         </div>
@@ -497,67 +265,19 @@
     </div>
 
     <script>
-        // Place all JavaScript functions inside the DOMContentLoaded listener
-        // to ensure they are defined before any HTML elements try to call them.
         document.addEventListener('DOMContentLoaded', function() {
-            // Navigation functionality
+            // Highlight the active navigation link based on the current page
+            const currentPage = window.location.pathname.split('/').pop(); // e.g., "index.html"
             document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault(); // Prevent default anchor link behavior
-                    const page = e.target.getAttribute('data-page');
-                    showPage(page);
-                    
-                    // Update active nav link
-                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                    e.target.classList.add('active');
-
-                    // Smooth scroll to the section
-                    document.getElementById(page).scrollIntoView({ behavior: 'smooth' });
-                });
+                if (link.getAttribute('href') === currentPage || (currentPage === '' && link.getAttribute('href') === 'index.html')) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
             });
 
-            function showPage(pageId) {
-                document.querySelectorAll('.page-section').forEach(section => {
-                    section.classList.remove('active');
-                });
-                document.getElementById(pageId).classList.add('active');
-            }
-
-            // Dosage calculator
-            window.calculateDosage = function() { // Make it a global function
-                const weight = parseFloat(document.getElementById('weight').value);
-                const medication = document.getElementById('medication').value;
-                const resultDiv = document.getElementById('dosageResult');
-                const valueDiv = document.getElementById('dosageValue');
-
-                if (!weight || !medication) {
-                    alert('Please enter weight and select medication');
-                    return;
-                }
-
-                let dosage = '';
-                switch(medication) {
-                    case 'acetaminophen':
-                        dosage = `${(weight * 10).toFixed(0)}-${(weight * 15).toFixed(0)}mg every 4-6 hours`;
-                        break;
-                    case 'ibuprofen':
-                        dosage = `${(weight * 5).toFixed(0)}-${(weight * 10).toFixed(0)}mg every 6-8 hours`;
-                        break;
-                    case 'amoxicillin':
-                        dosage = `${(weight * 20).toFixed(0)}-${(weight * 40).toFixed(0)}mg per day (divided doses)`;
-                        break;
-                }
-
-                valueDiv.textContent = dosage;
-                resultDiv.classList.remove('hidden');
-            }
-
-            // Chat functionality
-            // REMOVED: const GEMINI_API_KEY = 'AIzaSyBDBs9WhF46leK7tDfZA_UqznXjr-c0_Kg';
-            // REMOVED: const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
-
-            // Define toggleChat in the global scope or ensure it's accessible
-            window.toggleChat = function() { // Make it a global function
+            // Chatbot functionality (repeated on all pages)
+            window.toggleChat = function() {
                 const widget = document.getElementById('chatWidget');
                 const toggle = document.getElementById('chatToggle');
                 
@@ -570,8 +290,7 @@
                 }
             }
 
-            // Define sendMessage as async
-            window.sendMessage = async function() { // Make it a global function
+            window.sendMessage = async function() {
                 const input = document.getElementById('chatInput');
                 const message = input.value.trim();
                 
@@ -585,7 +304,7 @@
                 try {
                     const response = await callGeminiAPI(message);
                     hideTypingIndicator();
-                    addMessage(response, 'ai');
+                    addMessage(response, 'ai'); // Now capable of rendering HTML
                 } catch (error) {
                     hideTypingIndicator();
                     addMessage('I apologize, but I\'m having trouble connecting right now. Please try again later or contact our support team at +91 11 2345 6789.', 'ai');
@@ -593,12 +312,10 @@
                 }
             }
 
-            window.sendPredefinedMessage = function(message) { // Make it a global function
-                document.getElementById('chatInput').value = message;
-                sendMessage();
-            }
+            // Note: sendPredefinedMessage now directly navigates, so no need to send message to AI
+            // window.sendPredefinedMessage = function(message) { ... } is removed from here
+            // as its functionality is now directly in the HTML onclick.
 
-            // UPDATED: callGeminiAPI for Netlify function
             async function callGeminiAPI(userMessage) {
                 const context = getWebsiteContext();
                 const response = await fetch('/.netlify/functions/gemini-chat', {
@@ -609,6 +326,13 @@
                         context: context
                     })
                 });
+
+                if (!response.ok) {
+                    const errorDetails = await response.text();
+                    console.error('API request failed:', response.status, errorDetails);
+                    throw new Error(`API request failed: ${response.status} - ${errorDetails}`);
+                }
+
                 const data = await response.json();
                 return data.response;
             }
@@ -624,7 +348,14 @@
                 
                 const content = document.createElement('div');
                 content.className = 'message-content';
-                content.textContent = message;
+                
+                // IMPORTANT: For AI messages, use innerHTML to render clickable links.
+                // Be aware of XSS risks if AI output is not strictly controlled.
+                if (sender === 'ai') {
+                    content.innerHTML = message; 
+                } else {
+                    content.textContent = message;
+                }
                 
                 messageDiv.appendChild(avatar);
                 messageDiv.appendChild(content);
@@ -644,8 +375,20 @@
             }
 
             function getWebsiteContext() {
+                // IMPORTANT: Instruct the AI to generate HTML links for navigation suggestions.
+                // For example: "You can find more details on our <a href='safety.html'>Safety Page</a>."
                 return `
-                You are MediCare Plus AI Assistant, a healthcare chatbot for our website. Here's the context about our services:
+                You are MediCare Plus AI Assistant, a healthcare chatbot for our website.
+                The website has the following main pages:
+                - Home: index.html
+                - Safety: safety.html (Covers medication storage, administration, allergy management, infection control, emergency procedures)
+                - Dosage: dosage.html (Provides medication dosage information and a calculator for Acetaminophen, Ibuprofen, Amoxicillin)
+                - Contact: contact.html (Has contact form, address, phone, email, hours, social media links)
+
+                When suggesting navigation, please provide the full HTML link, e.g., <a href='safety.html'>Safety Page</a>.
+                Always provide helpful, accurate healthcare information while emphasizing that users should consult healthcare professionals for personalized medical advice. Never provide specific medical diagnoses or replace professional medical care.
+
+                Here's the context about our services:
 
                 SAFETY INFORMATION:
                 - Medication storage: cool, dry places away from sunlight, in original containers
@@ -671,8 +414,6 @@
                 - Medication dosage calculations
                 - Patient safety management
                 - Emergency support guidance
-
-                Always provide helpful, accurate healthcare information while emphasizing that users should consult healthcare professionals for personalized medical advice. Never provide specific medical diagnoses or replace professional medical care.
                 `;
             }
 
@@ -682,9 +423,6 @@
                     sendMessage();
                 }
             });
-
-            // Initialize page
-            showPage('home');
         });
     </script>
 </body>
