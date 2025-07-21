@@ -34,7 +34,7 @@ exports.handler = async (event, context) => {
 User question: ${message}
 
 === Instructions ===
-1. Provide a helpful, concise summary answering the user's question.
+1. Provide a helpful, concise summary answering the user's question include an HTML link to that page.
 2. If the question clearly relates to a specific page (Home, Safety, Dosage, or Contact), include an HTML link to that page.
 3. Use this exact format for links:
    - Safety: <a href='safety.html'>Safety Page</a>
