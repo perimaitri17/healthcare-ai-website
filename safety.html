@@ -79,8 +79,8 @@
             transition: all 0.3s ease;
             word-break: break-all;
             display: inline-block;
-            margin: 2px 0;
-            padding: 4px 6px;
+            margin: 2px 4px 2px 0;
+            padding: 4px 8px;
             background-color: rgba(102, 126, 234, 0.1);
             border-radius: 6px;
             border: 1px solid rgba(102, 126, 234, 0.2);
@@ -92,44 +92,48 @@
             transform: translateY(-1px);
         }
 
-        /* Enhanced style for ALL URL links - internal and external */
-        .message.ai .message-content .url-link {
-            font-family: monospace;
-            font-size: 12px;
-            background-color: #f3f4f6;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            padding: 8px 10px;
-            margin: 4px 0;
-            display: block;
-            color: #1f2937;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+        /* Special styling for internal page links */
+        .message.ai .message-content a.internal-link {
+            background-color: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+            border-color: rgba(34, 197, 94, 0.2);
         }
-        .message.ai .message-content .url-link:hover {
-            background-color: #e5e7eb;
-            border-color: #667eea;
-            color: #667eea;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        .message.ai .message-content a.internal-link:hover {
+            background-color: rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #15803d;
         }
 
-        /* Style for download links */
-        .message.ai .message-content .download-link {
-            background-color: #fef3c7;
-            border: 1px solid #f59e0b;
-            color: #92400e;
+        /* Style for external URL links with full URL display */
+        .message.ai .message-content a.external-link {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            background-color: #f8fafc;
+            color: #1e40af;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin: 4px 0;
+            display: inline-block;
+            max-width: 100%;
+            box-sizing: border-box;
         }
-        .message.ai .message-content .download-link:hover {
-            background-color: #fde68a;
-            border-color: #d97706;
-            color: #78350f;
+        .message.ai .message-content a.external-link:hover {
+            background-color: #f1f5f9;
+            border-color: #1e40af;
+            color: #1d4ed8;
         }
-        .message.ai .message-content .download-link::before {
-            content: "📥 ";
-            margin-right: 4px;
+
+        /* Style for downloadable content links */
+        .message.ai .message-content a.download-link {
+            background-color: rgba(245, 101, 101, 0.1);
+            color: #dc2626;
+            border-color: rgba(245, 101, 101, 0.2);
+        }
+        .message.ai .message-content a.download-link:hover {
+            background-color: rgba(245, 101, 101, 0.15);
+            border-color: rgba(245, 101, 101, 0.3);
+            color: #b91c1c;
         }
        
         .chat-toggle {
@@ -341,6 +345,10 @@
         const CHAT_HISTORY_KEY = 'medicarePlusChatHistory';
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Get current domain for internal link detection
+            const currentDomain = window.location.origin;
+            const currentHost = window.location.hostname;
+            
             // Highlight the active navigation link based on the current page
             const currentPage = window.location.pathname.split('/').pop(); // e.g., "safety.html"
             document.querySelectorAll('.nav-link').forEach(link => {
@@ -478,7 +486,7 @@
                 return data.response;
             }
 
-            // IMPROVED: Enhanced addMessage function with better URL handling
+            // Enhanced addMessage function to handle URL formatting with better link detection
             function addMessage(message, sender, saveToHistory = true) {
                 const messagesContainer = document.getElementById('chatMessages');
                 // Ensure messagesContainer exists before adding messages
@@ -499,7 +507,7 @@
                
                 // For AI messages, process URLs and use innerHTML to render clickable links
                 if (sender === 'ai') {
-                    const processedMessage = processUrlsInMessage(message);
+                    const processedMessage = processLinksInMessage(message);
                     content.innerHTML = processedMessage;
                 } else {
                     content.textContent = message;
@@ -517,60 +525,81 @@
                 }
             }
 
-            // IMPROVED: Enhanced function to process ALL URLs in messages
-            function processUrlsInMessage(message) {
+            // IMPROVED function to process all types of links in messages
+            function processLinksInMessage(message) {
                 let processedMessage = message;
                 
-                // Get the current domain for internal links
-                const currentDomain = window.location.origin;
-                
-                // Enhanced regex to catch more URL patterns including relative paths
-                const patterns = [
-                    // Full URLs (http/https)
-                    {
-                        regex: /(?<!href=['"])(https?:\/\/[^\s<>"'\)]+)/gi,
-                        handler: (url) => {
-                            const cleanUrl = url.replace(/[.,;!?]$/, ''); // Remove trailing punctuation
-                            const isDownload = /\.(pdf|doc|docx|xls|xlsx|ppt|pptx|zip|rar)$/i.test(cleanUrl);
-                            const linkClass = isDownload ? 'url-link download-link' : 'url-link';
-                            return `<a href="${cleanUrl}" class="${linkClass}" target="_blank" rel="noopener noreferrer">${cleanUrl}</a>`;
+                // Step 1: Preserve existing HTML links and improve them with proper classes
+                processedMessage = processedMessage.replace(/<a\s+([^>]*?)href=['"]([^'"]*?)['"]([^>]*?)>(.*?)<\/a>/gi, (match, beforeHref, url, afterHref, linkText) => {
+                    // Determine link type and add appropriate class
+                    let linkClass = '';
+                    
+                    if (url.includes('.html') || url.startsWith('#') || (!url.includes('http') && !url.includes('://'))) {
+                        // Internal links
+                        linkClass = 'internal-link';
+                        // For internal links, show the full URL if it's not a simple filename
+                        if (url.includes('.html') && !linkText.includes(currentDomain)) {
+                            linkText = `${linkText} (${currentDomain}/${url})`;
                         }
-                    },
-                    // Relative paths and internal links (ending with .html or /)
-                    {
-                        regex: /(?<!href=['"])([a-zA-Z0-9\-_]+\.html)(?!\s*['">])/gi,
-                        handler: (match) => {
-                            const fullUrl = `${currentDomain}/${match}`;
-                            return `<a href="${match}" class="url-link">${fullUrl}</a>`;
+                    } else if (url.includes('.pdf') || url.includes('.doc') || url.includes('.xls') || url.includes('download')) {
+                        // Download links
+                        linkClass = 'download-link';
+                        // Show full URL for download links
+                        if (linkText !== url) {
+                            linkText = `${linkText} (${url})`;
                         }
-                    },
-                    // Common domains without protocol
-                    {
-                        regex: /(?<!href=['"])(?:www\.)?([a-zA-Z0-9\-]+\.(com|org|net|edu|gov|co\.uk|in|io|ai)(?:\/[^\s<>"'\)]*)?)/gi,
-                        handler: (match) => {
-                            const fullUrl = match.startsWith('www.') ? `https://${match}` : `https://www.${match}`;
-                            const cleanMatch = match.replace(/[.,;!?]$/, '');
-                            const cleanFullUrl = fullUrl.replace(/[.,;!?]$/, '');
-                            return `<a href="${cleanFullUrl}" class="url-link" target="_blank" rel="noopener noreferrer">${cleanFullUrl}</a>`;
+                    } else {
+                        // External links
+                        linkClass = 'external-link';
+                        // Show full URL for external links
+                        if (linkText !== url) {
+                            linkText = `${linkText} (${url})`;
                         }
                     }
-                ];
+                    
+                    return `<a ${beforeHref}href="${url}" class="${linkClass}" ${afterHref} target="_blank" rel="noopener noreferrer">${linkText}</a>`;
+                });
+                
+                // Step 2: Convert standalone URLs that aren't already in HTML tags
+                const urlRegex = /(?<!href=['"])(https?:\/\/[^\s<>"']+)/gi;
+                
+                processedMessage = processedMessage.replace(urlRegex, (url) => {
+                    // Check if this URL is already inside an HTML tag
+                    const beforeUrl = processedMessage.substring(0, processedMessage.indexOf(url));
+                    const lastOpenTag = beforeUrl.lastIndexOf('<');
+                    const lastCloseTag = beforeUrl.lastIndexOf('>');
+                    
+                    // If we're inside an HTML tag, don't convert
+                    if (lastOpenTag > lastCloseTag) {
+                        return url;
+                    }
+                    
+                    // Determine link type for standalone URLs
+                    let linkClass = 'external-link';
+                    if (url.includes('.pdf') || url.includes('.doc') || url.includes('.xls') || url.includes('download')) {
+                        linkClass = 'download-link';
+                    }
+                    
+                    // Convert standalone URLs to clickable links with full URL display
+                    return `<a href="${url}" class="${linkClass}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+                });
 
-                // Apply each pattern
-                patterns.forEach(pattern => {
-                    processedMessage = processedMessage.replace(pattern.regex, (match) => {
-                        // Check if this URL is already inside an HTML tag
-                        const beforeMatch = processedMessage.substring(0, processedMessage.indexOf(match));
-                        const lastOpenTag = beforeMatch.lastIndexOf('<');
-                        const lastCloseTag = beforeMatch.lastIndexOf('>');
-                        
-                        // If we're inside an HTML tag, don't convert
-                        if (lastOpenTag > lastCloseTag) {
-                            return match;
-                        }
-                        
-                        return pattern.handler(match);
-                    });
+                // Step 3: Convert internal page references to proper links
+                const internalPageRegex = /\b(Safety Page|Dosage Page|Contact Page|Home Page)\b/gi;
+                processedMessage = processedMessage.replace(internalPageRegex, (match) => {
+                    const pageMap = {
+                        'Safety Page': 'safety.html',
+                        'Dosage Page': 'dosage.html',
+                        'Contact Page': 'contact.html',
+                        'Home Page': 'index.html'
+                    };
+                    
+                    const fileName = pageMap[match];
+                    if (fileName) {
+                        const fullUrl = `${currentDomain}/${fileName}`;
+                        return `<a href="${fileName}" class="internal-link">${match} (${fullUrl})</a>`;
+                    }
+                    return match;
                 });
                 
                 return processedMessage;
@@ -599,56 +628,72 @@
             }
 
             function getWebsiteContext() {
-                // IMPROVED: Enhanced context with better search understanding and URL formatting
+                // UPDATED: Enhanced context with better search patterns and link formatting
                 return `
                 You are MediCare Plus AI Assistant, a healthcare chatbot for our website.
-                Current page: Safety Guidelines (safety.html)
+                Current website domain: ${currentDomain}
                 
-                Website structure:
-                - Home: index.html (Welcome, overview, services)
-                - Safety: safety.html (Medication storage, administration, allergy management, infection control, emergency procedures, safety checklists, protocols)
-                - Dosage: dosage.html (Medication dosage calculator for Acetaminophen, Ibuprofen, Amoxicillin, dosing guidelines)
-                - Contact: contact.html (Contact form, address, phone +91 11 2345 6789, email, hours, social media)
+                The website has the following main pages:
+                - Home: index.html (Overview, services, about us)
+                - Safety: safety.html (Medication storage, administration safety, allergy management, infection control, emergency procedures, safety checklists)
+                - Dosage: dosage.html (Medication dosage calculators for Acetaminophen, Ibuprofen, Amoxicillin, dosing guidelines)
+                - Contact: contact.html (Contact form, address: 123 Healthcare Street, New Delhi 110001, phone: +91 11 2345 6789, email: info@medicareplus.com, hours, social media)
 
-                ENHANCED SEARCH INTELLIGENCE:
-                When users search for terms, understand their intent:
-                - "safety checklist" or "safety protocol" → Provide safety guidelines and offer checklist downloads
-                - "medication storage" → Focus on storage guidelines from safety page
-                - "dosage calculator" or "dose calculation" → Direct to dosage page
-                - "contact" or "support" → Direct to contact page
-                - "emergency" → Provide emergency procedures from safety page
-                - "infection control" → Focus on infection control from safety page
-
-                URL FORMATTING REQUIREMENTS (CRITICAL):
-                1. For internal website links, ALWAYS provide FULL URLs:
-                   - Safety page: ${window.location.origin}/safety.html
-                   - Dosage page: ${window.location.origin}/dosage.html
-                   - Contact page: ${window.location.origin}/contact.html
-                   - Home page: ${window.location.origin}/index.html
-
-                2. For external resources, provide FULL URLs starting with https://
-                   Examples:
-                   - https://www.cdc.gov/medicationsafety/
-                   - https://www.who.int/medicines/safety/
-                   - https://www.fda.gov/drugs/
-
-                3. For downloadable resources, mention FULL URLs and mark them clearly:
-                   - Safety checklist: https://www.cdc.gov/medicationsafety/pdf/safety-checklist.pdf
-                   - Medication guide: https://www.fda.gov/media/files/medication-guide.pdf
-
-                4. When providing checklists or downloadable content, format like this:
-                   "Here's the safety checklist information: [content]
+                ENHANCED SEARCH INTELLIGENCE - Match user queries to appropriate content:
+                
+                For SAFETY-related queries, keywords, or requests:
+                - "safety", "checklist", "guidelines", "medication safety", "storage", "administration", "allergy", "infection control", "emergency", "procedures", "protocols"
+                - Always provide comprehensive safety information AND suggest the Safety Page
+                
+                For DOSAGE-related queries:
+                - "dosage", "dose", "calculator", "how much", "medication amount", "acetaminophen", "ibuprofen", "amoxicillin", "dosing"
+                - Always provide dosage guidance AND suggest the Dosage Page with calculator
+                
+                For CONTACT-related queries:
+                - "contact", "phone", "email", "address", "location", "hours", "reach", "support"
+                - Always provide contact information AND suggest the Contact Page
+                
+                LINK FORMATTING RULES (CRITICAL - Follow exactly):
+                
+                1. For internal website navigation, format as:
+                   <a href='safety.html'>Safety Page</a>
+                   <a href='dosage.html'>Dosage Page</a>
+                   <a href='contact.html'>Contact Page</a>
+                   <a href='index.html'>Home Page</a>
                    
-                   Download the complete checklist:
-                   https://www.cdc.gov/medicationsafety/pdf/safety-checklist.pdf"
+                2. For external links, ALWAYS provide the complete URL as plain text:
+                   https://www.cdc.gov/medicationsafety/
+                   https://www.fda.gov/drugs/information-consumers-and-patients-drugs/
+                   
+                3. For downloadable content, include the full URL:
+                   https://www.who.int/publications/medication-safety-guidelines.pdf
 
-                NAVIGATION COMMANDS:
-                - Include "NAVIGATE_TO_SAFETY" if user explicitly asks to go to safety page
-                - Include "NAVIGATE_TO_DOSAGE" if user asks about dosage calculations
-                - Include "NAVIGATE_TO_CONTACT" if user wants to contact support
-                - Include "NAVIGATE_TO_HOME" if user asks for home page
+                4. INTELLIGENT RESPONSE FORMAT:
+                   When user asks about safety checklists, medication safety, or safety guidelines:
+                   "Here's important safety information: [provide safety content]
+                   
+                   For comprehensive safety guidelines and checklists, visit our <a href='safety.html'>Safety Page</a>
+                   
+                   Additional external resources:
+                   https://www.cdc.gov/medicationsafety/
+                   https://www.fda.gov/drugs/safe-disposal-medicines/"
 
-                Always prioritize accurate, helpful information and make all URLs clearly visible and clickable.
+                5. REDIRECT FEATURE: Only use these when user explicitly asks to GO TO or BE TAKEN TO a page:
+                   - For Home: Include "NAVIGATE_TO_HOME" 
+                   - For Safety: Include "NAVIGATE_TO_SAFETY"
+                   - For Dosage: Include "NAVIGATE_TO_DOSAGE" 
+                   - For Contact: Include "NAVIGATE_TO_CONTACT"
+
+                RESPONSE GUIDELINES:
+                - Always provide helpful content first, then suggest relevant pages
+                - Match user intent intelligently (safety queries → safety content + Safety Page)
+                - Include both internal pages and external authoritative sources when relevant
+                - Show full URLs for external resources to build trust
+                - Be conversational but professional
+                - Always emphasize consulting healthcare professionals for personalized advice
+                - For emergency situations, always direct to emergency services first
+
+                Remember: The JavaScript will automatically format all links to show full URLs, so focus on providing the right content and appropriate link references.
                 `;
             }
 
@@ -670,3 +715,4 @@
     </script>
 </body>
 </html>
+                   
