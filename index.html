@@ -150,7 +150,7 @@
                     <span class="text-xl font-bold text-gray-800">MediCare Plus</span>
                 </div>
                 <div class="flex space-x-6">
-                    <!-- Updated href attributes to point to new HTML files -->
+                    <!-- Navigation links - Resources link removed -->
                     <a href="index.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="home">Home</a>
                     <a href="safety.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="safety">Safety</a>
                     <a href="dosage.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="dosage">Dosage</a>
@@ -219,6 +219,69 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Integrated Resources Section -->
+            <section id="resources-content" class="page-section py-16 bg-white">
+                <div class="max-w-7xl mx-auto px-4">
+                    <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Healthcare Resources</h2>
+                    
+                    <div class="grid lg:grid-cols-2 gap-12">
+                        <div>
+                            <h3 class="text-2xl font-semibold text-indigo-600 mb-6">Downloadable Guides (PDFs)</h3>
+                            <div class="space-y-6">
+                                <div class="bg-gray-50 p-6 rounded-lg shadow">
+                                    <h4 class="font-semibold text-lg mb-3 text-gray-800">First Aid Basics Guide</h4>
+                                    <p class="text-gray-600 mb-4">A comprehensive guide covering essential first aid techniques for common injuries and emergencies. Keep this handy for quick reference.</p>
+                                    <a href="https://www.africau.edu/images/default/sample.pdf" download class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-300">
+                                        <i class="fas fa-download mr-2"></i>Download PDF
+                                    </a>
+                                </div>
+                                <div class="bg-gray-50 p-6 rounded-lg shadow">
+                                    <h4 class="font-semibold text-lg mb-3 text-gray-800">Healthy Living Handbook</h4>
+                                    <p class="text-gray-600 mb-4">Tips and advice for maintaining a healthy lifestyle, including nutrition, exercise, and mental well-being strategies.</p>
+                                    <a href="https://www.w3.org/WAI/ER/PRACTICES/pdf/text-document.pdf" download class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-300">
+                                        <i class="fas fa-download mr-2"></i>Download PDF
+                                    </a>
+                                </div>
+                                <div class="bg-gray-50 p-6 rounded-lg shadow">
+                                    <h4 class="font-semibold text-lg mb-3 text-gray-800">Medication Safety Checklist</h4>
+                                    <p class="text-gray-600 mb-4">A printable checklist to help you ensure safe medication storage and administration at home.</p>
+                                    <a href="https://www.ets.org/s/gre/pdf/gre_info_test_centers.pdf" download class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-300">
+                                        <i class="fas fa-download mr-2"></i>Download PDF
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-2xl font-semibold text-indigo-600 mb-6">External Healthcare Links</h3>
+                            <div class="space-y-6">
+                                <div class="bg-gray-50 p-6 rounded-lg shadow">
+                                    <h4 class="font-semibold text-lg mb-3 text-gray-800">World Health Organization (WHO)</h4>
+                                    <p class="text-gray-600 mb-4">Official site of the WHO, providing global health information, guidelines, and statistics.</p>
+                                    <a href="https://www.who.int/" target="_blank" rel="noopener noreferrer" class="inline-block bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300">
+                                        <i class="fas fa-external-link-alt mr-2"></i>Visit Site
+                                    </a>
+                                </div>
+                                <div class="bg-gray-50 p-6 rounded-lg shadow">
+                                    <h4 class="font-semibold text-lg mb-3 text-gray-800">Centers for Disease Control and Prevention (CDC)</h4>
+                                    <p class="text-gray-600 mb-4">Reliable health and safety information from the leading public health agency in the United States.</p>
+                                    <a href="https://www.cdc.gov/" target="_blank" rel="noopener noreferrer" class="inline-block bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300">
+                                        <i class="fas fa-external-link-alt mr-2"></i>Visit Site
+                                    </a>
+                                </div>
+                                <div class="bg-gray-50 p-6 rounded-lg shadow">
+                                    <h4 class="font-semibold text-lg mb-3 text-gray-800">National Institutes of Health (NIH)</h4>
+                                    <p class="text-gray-600 mb-4">Gateway to health information from the NIH, the nation's medical research agency.</p>
+                                    <a href="https://www.nih.gov/" target="_blank" rel="noopener noreferrer" class="inline-block bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300">
+                                        <i class="fas fa-external-link-alt mr-2"></i>Visit Site
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </section>
     </main>
 
@@ -262,6 +325,7 @@
                     <button onclick="window.location.href='safety.html'" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Safety Tips</button>
                     <button onclick="window.location.href='dosage.html'" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Dosage Help</button>
                     <button onclick="window.location.href='contact.html'" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Contact Us</button>
+                    <!-- Resources button removed as content is now on Home page -->
                 </div>
             </div>
         </div>
@@ -344,30 +408,6 @@
                 }
             }
 
-            // NEW: Function to detect navigation requests and redirect
-            function handleNavigationRequest(userMessage, aiResponse) {
-                const message = userMessage.toLowerCase();
-                
-                // Check for navigation keywords
-                const navigationPatterns = [
-                    { keywords: ['take me to home', 'go to home', 'home page', 'main page'], url: 'index.html' },
-                    { keywords: ['take me to safety', 'go to safety', 'safety page', 'show me safety'], url: 'safety.html' },
-                    { keywords: ['take me to dosage', 'go to dosage', 'dosage page', 'show me dosage'], url: 'dosage.html' },
-                    { keywords: ['take me to contact', 'go to contact', 'contact page', 'show me contact', 'contact form'], url: 'contact.html' }
-                ];
-                
-                for (const pattern of navigationPatterns) {
-                    if (pattern.keywords.some(keyword => message.includes(keyword))) {
-                        // Add a brief delay to show the AI response, then redirect
-                        setTimeout(() => {
-                            window.location.href = pattern.url;
-                        }, 2000); // 2 second delay
-                        return true; // Indicates a redirect will happen
-                    }
-                }
-                return false; // No redirect
-            }
-
             window.sendMessage = async function() {
                 const input = document.getElementById('chatInput');
                 const message = input.value.trim();
@@ -386,15 +426,7 @@
                 try {
                     const response = await callGeminiAPI(message);
                     hideTypingIndicator();
-                    
-                    // Check if this is a navigation request
-                    const willRedirect = handleNavigationRequest(message, response);
-                    
-                    if (willRedirect) {
-                        addMessage(response + "\n\n🔄 Redirecting you to the page...", 'ai', true);
-                    } else {
-                        addMessage(response, 'ai', true); // Save AI response
-                    }
+                    addMessage(response, 'ai', true); // Save AI response
                 } catch (error) {
                     hideTypingIndicator();
                     addMessage('I apologize, but I\'m having trouble connecting right now. Please try again later or contact our support team at +91 11 2345 6789.', 'ai', true); // Save error message
@@ -484,30 +516,32 @@
             }
 
             function getWebsiteContext() {
-                // UPDATED: Enhanced prompt for better navigation handling
+                // IMPORTANT: This prompt is designed to be highly prescriptive for the AI.
+                // It explicitly asks for HTML <a> tags.
                 return `
                 You are MediCare Plus AI Assistant, a healthcare chatbot for our website.
                 The website has the following main pages:
-                - Home: index.html
+                - Home: index.html (This page now includes Downloadable PDF Guides and External Healthcare Links)
                 - Safety: safety.html (Covers medication storage, administration, allergy management, infection control, emergency procedures)
                 - Dosage: dosage.html (Provides medication dosage information and a calculator for Acetaminophen, Ibuprofen, Amoxicillin)
                 - Contact: contact.html (Has contact form, address, phone, email, hours, social media links)
 
-                IMPORTANT INSTRUCTIONS:
-                1. Your response MUST always include a brief, helpful summary related to the user's question.
-                2. If the user's question clearly relates to one of the specific website pages (Home, Safety, Dosage, Contact), you MUST embed a direct, clickable HTML link to that page within your summary.
-                3. If the user asks to "take me to", "go to", "show me", or wants to navigate to a specific page, provide a helpful response AND include the appropriate link.
+                Your response MUST always include a brief, helpful summary related to the user's question.
+                If the user's question clearly relates to one of the specific website pages (Home, Safety, Dosage, Contact), you MUST, without exception, embed a direct, clickable HTML link to that page within your summary. The link MUST be a standard HTML <a> tag with an 'href' attribute pointing to the correct .html file.
 
-                Here are examples of the EXACT HTML link format to use:
+                Here are examples of the EXACT HTML link format to use. You MUST follow this format precisely:
                 - For Safety: <a href='safety.html'>Safety Page</a>
                 - For Dosage: <a href='dosage.html'>Dosage Page</a>
                 - For Contact: <a href='contact.html'>Contact Page</a>
-                - For Home/General: <a href='index.html'>Home Page</a>
+                - For Home/General or Resources: <a href='index.html'>Home Page</a>
 
-                Example responses:
-                - For "Please show the contact form": "To contact us, please visit our <a href='contact.html'>Contact Page</a> where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links."
-                - For "Take me to safety page": "I'll help you access our safety information. Visit our <a href='safety.html'>Safety Page</a> for comprehensive medication safety guidelines, storage instructions, and emergency procedures."
-                - For "Go to dosage page": "You can find dosage information and our medication calculator on our <a href='dosage.html'>Dosage Page</a>."
+                Combine the summary and the HTML link naturally within the response.
+
+                Example response for "Please show the contact form":
+                "To contact us, please visit our <a href='contact.html'>Contact Page</a> where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links. We're here to help! Remember to consult with healthcare professionals for personalized medical advice."
+
+                Example response for "Where can I find health guides?":
+                "You can find various downloadable health guides and links to external healthcare organizations on our <a href='index.html'>Home Page</a>, under the 'Healthcare Resources' section. These include first aid basics, healthy living tips, and medication safety checklists."
 
                 Always remember to emphasize that users should consult healthcare professionals for personalized medical advice.
                 `;
