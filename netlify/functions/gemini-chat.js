@@ -30,17 +30,20 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // --- KEY CHANGE HERE: More explicit prompt for summary + HTML link ---
+    // --- KEY CHANGE HERE: Even MORE explicit prompt for summary + HTML link ---
     const prompt = `${userContext}
 
 User question: ${message}
 
-Please provide a brief, helpful summary related to the user's question.
-If the question is about a specific page (Home, Safety, Dosage, Contact), please include a direct HTML link to that page within your summary.
-For example, if the user asks about Safety, your response should be like:
-"Here's a quick overview of our safety protocols. You can find more details on our <a href='safety.html'>Safety Page</a>."
-If the user asks about Contact, your response should be like:
-"To contact us, please visit our <a href='contact.html'>Contact Page</a> where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links. We're here to help!"
+Your response MUST always include a brief, helpful summary related to the user's question.
+If the user's question clearly relates to one of the specific website pages (Home, Safety, Dosage, Contact), you MUST include a direct, clickable HTML link to that page within your summary.
+
+Here are examples of how to include the link:
+- If the user asks about Safety: "Here's a quick overview of our safety protocols. You can find more details on our <a href='safety.html'>Safety Page</a>."
+- If the user asks about Dosage: "For information on medication dosages, including a calculator, please visit our <a href='dosage.html'>Dosage Page</a>."
+- If the user asks about Contact: "To contact us, please visit our <a href='contact.html'>Contact Page</a> where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links. We're here to help!"
+- If the user asks about Home/General: "Welcome to MediCare Plus! Our <a href='index.html'>Home Page</a> provides an overview of our services and features."
+
 Always remember to emphasize that users should consult healthcare professionals for personalized medical advice.
 `;
 
