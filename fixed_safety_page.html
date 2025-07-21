@@ -1,0 +1,606 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare Plus - Safety</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Shared styles for chat and navigation */
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .chat-widget {
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid #e5e7eb;
+            background: white;
+        }
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        .message-content {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .message.user .message-content {
+            background: #667eea;
+            color: white;
+        }
+        .message.ai .message-content {
+            background: white;
+            border: 1px solid #e5e7eb;
+            color: #374151;
+        }
+       
+        /* Enhanced styling for links in AI messages */
+        .message.ai .message-content a {
+            color: #667eea;
+            text-decoration: underline;
+            font-weight: 600;
+            transition: color 0.3s ease;
+            word-break: break-all;
+            display: inline-block;
+            margin: 2px 0;
+            padding: 2px 4px;
+            background-color: rgba(102, 126, 234, 0.1);
+            border-radius: 4px;
+        }
+        .message.ai .message-content a:hover {
+            color: #764ba2;
+            background-color: rgba(118, 75, 162, 0.1);
+        }
+
+        /* Style for full URL links */
+        .message.ai .message-content .url-link {
+            font-family: monospace;
+            font-size: 12px;
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 6px 8px;
+            margin: 4px 0;
+            display: block;
+            color: #1f2937;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .message.ai .message-content .url-link:hover {
+            background-color: #e5e7eb;
+            border-color: #667eea;
+            color: #667eea;
+        }
+       
+        .chat-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            transition: transform 0.3s ease;
+        }
+        .chat-toggle:hover {
+            transform: scale(1.05);
+        }
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 15px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 15px;
+            max-width: 80px;
+        }
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #667eea;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        /* Page specific styles - only for active page */
+        .page-section {
+            display: block; /* All sections are always visible on their own page */
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link.active {
+            border-bottom: 2px solid #667eea;
+            color: #667eea;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        /* Logo clickable styling */
+        .logo-link {
+            display: flex;
+            align-items: center;
+            space-x: 2;
+            text-decoration: none;
+            color: inherit;
+            transition: opacity 0.3s ease;
+        }
+        .logo-link:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <!-- Made logo clickable -->
+                <a href="index.html" class="logo-link">
+                    <i class="fas fa-heartbeat text-2xl text-indigo-600"></i>
+                    <span class="text-xl font-bold text-gray-800 ml-2">MediCare Plus</span>
+                </a>
+                <div class="flex space-x-6">
+                    <!-- Updated href attributes to point to new HTML files -->
+                    <a href="index.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="home">Home</a>
+                    <a href="safety.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="safety">Safety</a>
+                    <a href="dosage.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="dosage">Dosage</a>
+                    <a href="contact.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="contact">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content for Safety Page -->
+    <main class="min-h-screen">
+        <section id="safety-content" class="page-section">
+            <div class="max-w-7xl mx-auto px-4 py-12">
+                <h1 class="text-4xl font-bold text-gray-800 mb-8">Healthcare Safety Guidelines</h1>
+               
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div>
+                        <h2 class="text-2xl font-semibold text-indigo-600 mb-6">Medication Safety</h2>
+                        <div class="space-y-4">
+                            <div class="bg-white p-6 rounded-lg shadow">
+                                <h3 class="font-semibold text-lg mb-3">Storage Guidelines</h3>
+                                <ul class="text-gray-600 space-y-2">
+                                    <li>• Store medications in cool, dry places away from direct sunlight</li>
+                                    <li>• Keep medications in original containers with labels</li>
+                                    <li>• Store at recommended temperature ranges</li>
+                                    <li>• Keep away from children and pets</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow">
+                                <h3 class="font-semibold text-lg mb-3">Administration Safety</h3>
+                                <ul class="text-gray-600 space-y-2">
+                                    <li>• Always verify patient identity before administration</li>
+                                    <li>• Check medication expiration dates</li>
+                                    <li>• Confirm correct dosage and route</li>
+                                    <li>• Document administration immediately</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                   
+                    <div>
+                        <h2 class="text-2xl font-semibold text-indigo-600 mb-6">Patient Safety</h2>
+                        <div class="space-y-4">
+                            <div class="bg-white p-6 rounded-lg shadow">
+                                <h3 class="font-semibold text-lg mb-3">Allergy Management</h3>
+                                <ul class="text-gray-600 space-y-2">
+                                    <li>• Maintain updated allergy records</li>
+                                    <li>• Use clear allergy identification systems</li>
+                                    <li>• Cross-check medications against known allergies</li>
+                                    <li>• Have emergency protocols ready</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow">
+                                <h3 class="font-semibold text-lg mb-3">Infection Control</h3>
+                                <ul class="text-gray-600 space-y-2">
+                                    <li>• Follow strict hand hygiene protocols</li>
+                                    <li>• Use appropriate personal protective equipment</li>
+                                    <li>• Maintain sterile environments when required</li>
+                                    <li>• Regular equipment sterilization</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-12 bg-red-50 p-6 rounded-lg border-l-4 border-red-400">
+                    <h3 class="text-lg font-semibold text-red-800 mb-3">Emergency Procedures</h3>
+                    <p class="text-red-700">In case of medical emergencies, always call emergency services immediately. Our AI chatbot can provide basic guidance, but it cannot replace professional medical care in emergency situations.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- AI Chatbot (Crucial: This entire div must be present in ALL your HTML files) -->
+    <div class="chat-container">
+        <div class="chat-widget" id="chatWidget">
+            <div class="chat-header">
+                <div>
+                    <h3 class="font-semibold">MediCare AI Assistant</h3>
+                    <p class="text-sm opacity-90">Healthcare Support</p>
+                </div>
+                <button onclick="(() => toggleChat())()" class="text-white hover:text-gray-200">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+           
+            <div class="chat-messages" id="chatMessages">
+                <!-- Chat messages will be loaded here by JavaScript -->
+            </div>
+           
+            <div class="typing-indicator message ai" id="typingIndicator">
+                <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+           
+            <div class="chat-input-area">
+                <div class="flex space-x-2">
+                    <input type="text" id="chatInput" placeholder="Ask me about healthcare..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                    <button onclick="sendMessage()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="mt-2 flex flex-wrap gap-1">
+                    <!-- Updated onclick to navigate to new pages -->
+                    <button onclick="window.location.href='safety.html'" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Safety Tips</button>
+                    <button onclick="window.location.href='dosage.html'" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Dosage Help</button>
+                    <button onclick="window.location.href='contact.html'" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Contact Us</button>
+                </div>
+            </div>
+        </div>
+       
+        <button class="chat-toggle" onclick="(() => toggleChat())()" id="chatToggle">
+            <i class="fas fa-comments"></i>
+        </button>
+    </div>
+
+    <script>
+        // Define a constant for the localStorage key
+        const CHAT_HISTORY_KEY = 'medicarePlusChatHistory';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Highlight the active navigation link based on the current page
+            const currentPage = window.location.pathname.split('/').pop(); // e.g., "safety.html"
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentPage || (currentPage === '' && link.getAttribute('href') === 'index.html')) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+
+            // --- Chat History Management ---
+            let chatHistory = []; // Array to store message objects {sender: 'user'/'ai', text: 'message'}
+
+            function saveChatHistory() {
+                try {
+                    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(chatHistory));
+                    console.log('Chat History Saved:', chatHistory);
+                } catch (e) {
+                    console.error('Error saving chat history to localStorage:', e);
+                }
+            }
+
+            function loadChatHistory() {
+                const messagesContainer = document.getElementById('chatMessages');
+                // Ensure messagesContainer exists before clearing its content
+                if (messagesContainer) {
+                    messagesContainer.innerHTML = ''; // Clear existing messages before loading
+                } else {
+                    console.error('Chat messages container not found!');
+                    return; // Exit if container is missing
+                }
+
+                try {
+                    const storedHistory = localStorage.getItem(CHAT_HISTORY_KEY);
+                    if (storedHistory) {
+                        chatHistory = JSON.parse(storedHistory);
+                        console.log('Chat History Loaded:', chatHistory);
+                        chatHistory.forEach(msg => addMessage(msg.text, msg.sender, false)); // false to prevent saving again on load
+                    } else {
+                        // Add initial AI welcome message if no history
+                        addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', false);
+                    }
+                } catch (e) {
+                    console.error('Error loading chat history from localStorage:', e);
+                    // Fallback: Add initial AI message if loading fails
+                    addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', false);
+                }
+            }
+            // --- End Chat History Management ---
+
+            // Chatbot functionality
+            window.toggleChat = function() {
+                const widget = document.getElementById('chatWidget');
+                const toggle = document.getElementById('chatToggle');
+               
+                if (widget) { // Null check for chatWidget
+                    if (widget.style.display === 'none' || widget.style.display === '') {
+                        widget.style.display = 'flex';
+                        if (toggle) toggle.style.display = 'none'; // Only hide toggle if it exists
+                    } else {
+                        widget.style.display = 'none';
+                        if (toggle) toggle.style.display = 'flex'; // Only show toggle if it exists
+                    }
+                } else {
+                    console.error('Chat widget element not found!');
+                }
+            }
+
+            window.sendMessage = async function() {
+                const input = document.getElementById('chatInput');
+                const message = input.value.trim();
+               
+                if (!input) { // Null check for chatInput
+                    console.error('Chat input element not found!');
+                    return;
+                }
+                if (!message) return;
+               
+                addMessage(message, 'user', true); // Save user message
+                input.value = '';
+               
+                showTypingIndicator();
+               
+                try {
+                    const response = await callGeminiAPI(message);
+                    hideTypingIndicator();
+                    addMessage(response, 'ai', true); // Save AI response
+                   
+                    // NEW: Check if the response contains navigation instructions and redirect if needed
+                    checkForNavigation(response);
+                } catch (error) {
+                    hideTypingIndicator();
+                    addMessage('I apologize, but I\'m having trouble connecting right now. Please try again later or contact our support team at +91 11 2345 6789.', 'ai', true); // Save error message
+                    console.error('Error:', error);
+                }
+            }
+
+            // NEW: Function to check for navigation commands and redirect
+            function checkForNavigation(response) {
+                const navigationCommands = {
+                    'NAVIGATE_TO_HOME': 'index.html',
+                    'NAVIGATE_TO_SAFETY': 'safety.html',
+                    'NAVIGATE_TO_DOSAGE': 'dosage.html',
+                    'NAVIGATE_TO_CONTACT': 'contact.html'
+                };
+
+                for (const [command, url] of Object.entries(navigationCommands)) {
+                    if (response.includes(command)) {
+                        setTimeout(() => {
+                            window.location.href = url;
+                        }, 2000); // 2-second delay to let user see the message
+                        break;
+                    }
+                }
+            }
+
+            async function callGeminiAPI(userMessage) {
+                const context = getWebsiteContext();
+                const response = await fetch('/.netlify/functions/gemini-chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: userMessage,
+                        context: context
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorDetails = await response.text();
+                    console.error('API request failed:', response.status, errorDetails);
+                    throw new Error(`API request failed: ${response.status} - ${errorDetails}`);
+                }
+
+                const data = await response.json();
+                return data.response;
+            }
+
+            // Enhanced addMessage function to handle URL formatting
+            function addMessage(message, sender, saveToHistory = true) {
+                const messagesContainer = document.getElementById('chatMessages');
+                // Ensure messagesContainer exists before adding messages
+                if (!messagesContainer) {
+                    console.error('Chat messages container not found when trying to add message!');
+                    return;
+                }
+
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+               
+                const avatar = document.createElement('div');
+                avatar.className = 'w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm';
+                avatar.innerHTML = sender === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+               
+                const content = document.createElement('div');
+                content.className = 'message-content';
+               
+                // For AI messages, process URLs and use innerHTML to render clickable links
+                if (sender === 'ai') {
+                    const processedMessage = processUrlsInMessage(message);
+                    content.innerHTML = processedMessage;
+                } else {
+                    content.textContent = message;
+                }
+               
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(content);
+                messagesContainer.appendChild(messageDiv);
+               
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                if (saveToHistory) {
+                    chatHistory.push({ sender: sender, text: message });
+                    saveChatHistory();
+                }
+            }
+
+            // New function to process URLs in messages
+            function processUrlsInMessage(message) {
+                // First, handle existing HTML links and preserve them
+                let processedMessage = message;
+                
+                // Find standalone URLs that aren't already in HTML tags
+                // This regex matches URLs that aren't already wrapped in <a> tags
+                const urlRegex = /(?<!href=['"])(https?:\/\/[^\s<>"']+)/gi;
+                
+                processedMessage = processedMessage.replace(urlRegex, (url) => {
+                    // Check if this URL is already inside an HTML tag
+                    const beforeUrl = processedMessage.substring(0, processedMessage.indexOf(url));
+                    const lastOpenTag = beforeUrl.lastIndexOf('<');
+                    const lastCloseTag = beforeUrl.lastIndexOf('>');
+                    
+                    // If we're inside an HTML tag, don't convert
+                    if (lastOpenTag > lastCloseTag) {
+                        return url;
+                    }
+                    
+                    // Convert standalone URLs to clickable links with full URL display
+                    return `<a href="${url}" class="url-link" target="_blank" rel="noopener noreferrer">${url}</a>`;
+                });
+                
+                return processedMessage;
+            }
+
+            function showTypingIndicator() {
+                const typingIndicator = document.getElementById('typingIndicator');
+                if (typingIndicator) {
+                    typingIndicator.style.display = 'flex';
+                } else {
+                    console.error('Typing indicator element not found!');
+                }
+                const messagesContainer = document.getElementById('chatMessages');
+                if (messagesContainer) {
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }
+            }
+
+            function hideTypingIndicator() {
+                const typingIndicator = document.getElementById('typingIndicator');
+                if (typingIndicator) {
+                    typingIndicator.style.display = 'none';
+                } else {
+                    console.error('Typing indicator element not found!');
+                }
+            }
+
+            function getWebsiteContext() {
+                // UPDATED: Enhanced prompt with clearer URL formatting instructions
+                return `
+                You are MediCare Plus AI Assistant, a healthcare chatbot for our website.
+                The website has the following main pages:
+                - Home: index.html
+                - Safety: safety.html (Covers medication storage, administration, allergy management, infection control, emergency procedures)
+                - Dosage: dosage.html (Provides medication dosage information and a calculator for Acetaminophen, Ibuprofen, Amoxicillin)
+                - Contact: contact.html (Has contact form, address, phone, email, hours, social media links)
+
+                NAVIGATION AND LINK FORMATTING RULES:
+                1. Always provide a helpful summary first, then include relevant links.
+                
+                2. For internal website navigation, use HTML links like:
+                   <a href='safety.html'>Safety Page</a>
+                   <a href='dosage.html'>Dosage Page</a>
+                   <a href='contact.html'>Contact Page</a>
+                   <a href='index.html'>Home Page</a>
+
+                3. For external links, always include the FULL URL as plain text (not wrapped in HTML tags). The JavaScript will automatically convert these to clickable links. Examples:
+                   - https://www.cdc.gov/
+                   - https://www.w3.org/WAI/ER/PRACTICES/pdf/text-document.pdf
+                   - https://healthcare-ai-website.netlify.app/safety
+
+                4. When referencing external resources, format your response like this:
+                   "Here's the information you requested: [summary text]
+                   
+                   For more detailed guidelines, you can visit:
+                   https://www.cdc.gov/medicationsafety/
+                   
+                   Additional resources:
+                   https://www.fda.gov/drugs/information-consumers-and-patients-drugs/"
+
+                5. REDIRECT FEATURE: If the user explicitly asks to be taken to a specific page, include the appropriate navigation command:
+                   - For Home: Include "NAVIGATE_TO_HOME" 
+                   - For Safety: Include "NAVIGATE_TO_SAFETY"
+                   - For Dosage: Include "NAVIGATE_TO_DOSAGE" 
+                   - For Contact: Include "NAVIGATE_TO_CONTACT"
+
+                Always remember to emphasize that users should consult healthcare professionals for personalized medical advice.
+                `;
+            }
+
+            // Enter key support for chat
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) { // Added null check
+                chatInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            } else {
+                console.error("Chat input element not found, cannot attach keypress listener!");
+            }
+
+            // Load chat history when the page loads
+            loadChatHistory();
+        });
+    </script>
+</body>
+</html>
