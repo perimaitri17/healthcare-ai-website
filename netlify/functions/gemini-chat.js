@@ -30,13 +30,19 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // THIS IS THE KEY CHANGE: Modify the prompt to ask for a summary AND a link.
+    // --- KEY CHANGE HERE: More explicit prompt for summary + HTML link ---
     const prompt = `${userContext}
 
 User question: ${message}
 
-Please provide a brief, helpful summary related to the user's question, and if applicable, include a direct HTML link to the relevant page on the website. For example: "Here's a quick overview of safety. You can find more details on our <a href='safety.html'>Safety Page</a>."`;
-
+Please provide a brief, helpful summary related to the user's question.
+If the question is about a specific page (Home, Safety, Dosage, Contact), please include a direct HTML link to that page within your summary.
+For example, if the user asks about Safety, your response should be like:
+"Here's a quick overview of our safety protocols. You can find more details on our <a href='safety.html'>Safety Page</a>."
+If the user asks about Contact, your response should be like:
+"To contact us, please visit our <a href='contact.html'>Contact Page</a> where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links. We're here to help!"
+Always remember to emphasize that users should consult healthcare professionals for personalized medical advice.
+`;
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
