@@ -1,0 +1,450 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare Plus - Contact</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Shared styles for chat and navigation */
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .chat-widget {
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid #e5e7eb;
+            background: white;
+        }
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        .message-content {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .message.user .message-content {
+            background: #667eea;
+            color: white;
+        }
+        .message.ai .message-content {
+            background: white;
+            border: 1px solid #e5e7eb;
+            color: #374151;
+        }
+        .chat-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            transition: transform 0.3s ease;
+        }
+        .chat-toggle:hover {
+            transform: scale(1.05);
+        }
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 15px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 15px;
+            max-width: 80px;
+        }
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #667eea;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        /* Page specific styles - only for active page */
+        .page-section {
+            display: block; /* All sections are always visible on their own page */
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link.active {
+            border-bottom: 2px solid #667eea;
+            color: #667eea;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-heartbeat text-2xl text-indigo-600"></i>
+                    <span class="text-xl font-bold text-gray-800">MediCare Plus</span>
+                </div>
+                <div class="flex space-x-6">
+                    <!-- Updated href attributes to point to new HTML files -->
+                    <a href="index.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="home">Home</a>
+                    <a href="safety.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="safety">Safety</a>
+                    <a href="dosage.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="dosage">Dosage</a>
+                    <a href="contact.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="contact">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content for Contact Page -->
+    <main class="min-h-screen">
+        <section id="contact-content" class="page-section">
+            <div class="max-w-7xl mx-auto px-4 py-12">
+                <h1 class="text-4xl font-bold text-gray-800 mb-8">Contact Us</h1>
+                
+                <div class="grid lg:grid-cols-2 gap-12">
+                    <div>
+                        <h2 class="text-2xl font-semibold text-indigo-600 mb-6">Get in Touch</h2>
+                        <form class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                <input type="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                <input type="tel" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option>General Inquiry</option>
+                                    <option>Medical Consultation</option>
+                                    <option>Technical Support</option>
+                                    <option>Partnership</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                                <textarea rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300">Send Message</button>
+                        </form>
+                    </div>
+                    
+                    <div>
+                        <h2 class="text-2xl font-semibold text-indigo-600 mb-6">Contact Information</h2>
+                        <div class="space-y-6">
+                            <div class="flex items-start space-x-4">
+                                <i class="fas fa-map-marker-alt text-indigo-600 mt-1"></i>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Address</h3>
+                                    <p class="text-gray-600">123 Healthcare Avenue<br>Medical District, Delhi 110001<br>India</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <i class="fas fa-phone text-indigo-600 mt-1"></i>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Phone</h3>
+                                    <p class="text-gray-600">+91 11 2345 6789<br>Emergency: +91 11 9876 5432</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <i class="fas fa-envelope text-indigo-600 mt-1"></i>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Email</h3>
+                                    <p class="text-gray-600">info@medicareplus.com<br>support@medicareplus.com</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <i class="fas fa-clock text-indigo-600 mt-1"></i>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Hours</h3>
+                                    <p class="text-gray-600">Monday - Friday: 8:00 AM - 8:00 PM<br>Weekend: 9:00 AM - 5:00 PM<br>Emergency: 24/7</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Follow Us</h3>
+                            <div class="flex space-x-4">
+                                <a href="#" class="text-indigo-600 hover:text-indigo-800 text-2xl"><i class="fab fa-facebook"></i></a>
+                                <a href="#" class="text-indigo-600 hover:text-indigo-800 text-2xl"><i class="fab fa-twitter"></i></a>
+                                <a href="#" class="text-indigo-600 hover:text-indigo-800 text-2xl"><i class="fab fa-linkedin"></i></a>
+                                <a href="#" class="text-indigo-600 hover:text-indigo-800 text-2xl"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- AI Chatbot (repeated on all pages) -->
+    <div class="chat-container">
+        <div class="chat-widget" id="chatWidget">
+            <div class="chat-header">
+                <div>
+                    <h3 class="font-semibold">MediCare AI Assistant</h3>
+                    <p class="text-sm opacity-90">Healthcare Support</p>
+                </div>
+                <button onclick="(() => toggleChat())()" class="text-white hover:text-gray-200">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai">
+                    <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?
+                    </div>
+                </div>
+            </div>
+            
+            <div class="typing-indicator message ai" id="typingIndicator">
+                <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+            
+            <div class="chat-input-area">
+                <div class="flex space-x-2">
+                    <input type="text" id="chatInput" placeholder="Ask me about healthcare..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                    <button onclick="sendMessage()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="mt-2 flex flex-wrap gap-1">
+                    <!-- Updated onclick to navigate to new pages -->
+                    <button onclick="window.location.href='safety.html'" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Safety Tips</button>
+                    <button onclick="window.location.href='dosage.html'" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Dosage Help</button>
+                    <button onclick="window.location.href='contact.html'" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition duration-300">Contact Us</button>
+                </div>
+            </div>
+        </div>
+        
+        <button class="chat-toggle" onclick="(() => toggleChat())()" id="chatToggle">
+            <i class="fas fa-comments"></i>
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Highlight the active navigation link based on the current page
+            const currentPage = window.location.pathname.split('/').pop(); // e.g., "contact.html"
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentPage || (currentPage === '' && link.getAttribute('href') === 'index.html')) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+
+            // Chatbot functionality (repeated on all pages)
+            window.toggleChat = function() {
+                const widget = document.getElementById('chatWidget');
+                const toggle = document.getElementById('chatToggle');
+                
+                if (widget.style.display === 'none' || widget.style.display === '') {
+                    widget.style.display = 'flex';
+                    toggle.style.display = 'none';
+                } else {
+                    widget.style.display = 'none';
+                    toggle.style.display = 'flex';
+                }
+            }
+
+            window.sendMessage = async function() {
+                const input = document.getElementById('chatInput');
+                const message = input.value.trim();
+                
+                if (!message) return;
+                
+                addMessage(message, 'user');
+                input.value = '';
+                
+                showTypingIndicator();
+                
+                try {
+                    const response = await callGeminiAPI(message);
+                    hideTypingIndicator();
+                    addMessage(response, 'ai'); // Now capable of rendering HTML
+                } catch (error) {
+                    hideTypingIndicator();
+                    addMessage('I apologize, but I\'m having trouble connecting right now. Please try again later or contact our support team at +91 11 2345 6789.', 'ai');
+                    console.error('Error:', error);
+                }
+            }
+
+            async function callGeminiAPI(userMessage) {
+                const context = getWebsiteContext();
+                const response = await fetch('/.netlify/functions/gemini-chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: userMessage,
+                        context: context
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorDetails = await response.text();
+                    console.error('API request failed:', response.status, errorDetails);
+                    throw new Error(`API request failed: ${response.status} - ${errorDetails}`);
+                }
+
+                const data = await response.json();
+                return data.response;
+            }
+
+            function addMessage(message, sender) {
+                const messagesContainer = document.getElementById('chatMessages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+                
+                const avatar = document.createElement('div');
+                avatar.className = 'w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm';
+                avatar.innerHTML = sender === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+                
+                const content = document.createElement('div');
+                content.className = 'message-content';
+                
+                // IMPORTANT: For AI messages, use innerHTML to render clickable links.
+                // Be aware of XSS risks if AI output is not strictly controlled.
+                if (sender === 'ai') {
+                    content.innerHTML = message; 
+                } else {
+                    content.textContent = message;
+                }
+                
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(content);
+                messagesContainer.appendChild(messageDiv);
+                
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            function showTypingIndicator() {
+                document.getElementById('typingIndicator').style.display = 'flex';
+                const messagesContainer = document.getElementById('chatMessages');
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            function hideTypingIndicator() {
+                document.getElementById('typingIndicator').style.display = 'none';
+            }
+
+            function getWebsiteContext() {
+                // IMPORTANT: Instruct the AI to generate HTML links for navigation suggestions.
+                // For example: "You can find more details on our <a href='safety.html'>Safety Page</a>."
+                return `
+                You are MediCare Plus AI Assistant, a healthcare chatbot for our website.
+                The website has the following main pages:
+                - Home: index.html
+                - Safety: safety.html (Covers medication storage, administration, allergy management, infection control, emergency procedures)
+                - Dosage: dosage.html (Provides medication dosage information and a calculator for Acetaminophen, Ibuprofen, Amoxicillin)
+                - Contact: contact.html (Has contact form, address, phone, email, hours, social media links)
+
+                When suggesting navigation, please provide the full HTML link, e.g., <a href='safety.html'>Safety Page</a>.
+                Always provide helpful, accurate healthcare information while emphasizing that users should consult healthcare professionals for personalized medical advice. Never provide specific medical diagnoses or replace professional medical care.
+
+                Here's the context about our services:
+
+                SAFETY INFORMATION:
+                - Medication storage: cool, dry places away from sunlight, in original containers
+                - Administration safety: verify patient identity, check expiration dates, confirm dosage
+                - Allergy management: maintain updated records, use identification systems
+                - Infection control: hand hygiene, PPE, sterile environments
+                - Emergency procedures: call emergency services immediately for medical emergencies
+
+                DOSAGE INFORMATION:
+                - Acetaminophen: Adults 325-650mg every 4-6 hours (max 3000mg/24h), Pediatric 10-15mg/kg every 4-6 hours
+                - Ibuprofen: Adults 200-400mg every 4-6 hours (max 1200mg/24h), Pediatric 5-10mg/kg every 6-8 hours
+                - Amoxicillin: Adults 250-500mg every 8 hours, Pediatric 20-40mg/kg/day divided
+
+                CONTACT INFORMATION:
+                - Address: 123 Healthcare Avenue, Medical District, Delhi 110001, India
+                - Phone: +91 11 2345 6789, Emergency: +91 11 9876 5432
+                - Email: info@medicareplus.com, support@medicareplus.com
+                - Hours: Mon-Fri 8AM-8PM, Weekend 9AM-5PM, Emergency 24/7
+
+                SERVICES:
+                - 24/7 AI-powered healthcare assistance
+                - Safety protocols and guidelines
+                - Medication dosage calculations
+                - Patient safety management
+                - Emergency support guidance
+                `;
+            }
+
+            // Enter key support for chat
+            document.getElementById('chatInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
