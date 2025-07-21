@@ -1,4 +1,5 @@
 exports.handler = async (event, context) => {
+  // Ensure only POST requests are allowed for this function
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -13,10 +14,10 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Ensure you are parsing the event body correctly
     const { message, context: userContext } = JSON.parse(event.body);
     const API_KEY = process.env.GEMINI_API_KEY;
 
+    // Basic validation for API_KEY
     if (!API_KEY) {
       console.error('GEMINI_API_KEY environment variable is not set.');
       return {
@@ -29,27 +30,24 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // The prompt is constructed using the userContext received from the client.
-    // Modified to be extremely explicit about including HTML <a> tags.
+    // Modified prompt to use markdown-style links
     const prompt = `${userContext}
 
 User question: ${message}
 
 Your response MUST always include a brief, helpful summary related to the user's question.
-If the user's question clearly relates to one of the specific website pages (Home, Safety, Dosage, Contact), you MUST, without exception, embed a direct, clickable HTML link to that page within your summary. The link MUST be a standard HTML <a> tag with an 'href' attribute pointing to the correct .html file.
+If the user's question clearly relates to one of the specific website pages (Home, Safety, Dosage, Contact), you MUST include a navigation link to that page using this EXACT markdown format:
 
-Here are examples of the EXACT HTML link format to use. You MUST follow this format precisely:
-- For Safety: <a href='safety.html'>Safety Page</a>
-- For Dosage: <a href='dosage.html'>Dosage Page</a>
-- For Contact: <a href='contact.html'>Contact Page</a>
-- For Home/General: <a href='index.html'>Home Page</a>
-
-Combine the summary and the HTML link naturally within the response.
+For different pages, use these formats:
+- For Safety: [Safety Page](safety.html)
+- For Dosage: [Dosage Page](dosage.html) 
+- For Contact: [Contact Page](contact.html)
+- For Home/General: [Home Page](index.html)
 
 Example response for "Please show the contact form":
-"To contact us, please visit our <a href='contact.html'>Contact Page</a> where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links. We're here to help! Remember to consult with healthcare professionals for personalized medical advice."
+"To contact us, please visit our [Contact Page](contact.html) where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links. We're here to help! Remember to consult with healthcare professionals for personalized medical advice."
 
-Your response should be concise and directly answer the user's question while adhering to the link format.
+Always remember to emphasize that users should consult healthcare professionals for personalized medical advice.
 `;
 
     const response = await fetch(
@@ -88,6 +86,11 @@ Your response should be concise and directly answer the user's question while ad
       throw new Error('Unexpected API response structure from Gemini.');
     }
 
+    let responseText = data.candidates[0].content.parts[0].text;
+    
+    // Convert markdown links to HTML links
+    responseText = responseText.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+
     return {
       statusCode: 200,
       headers: {
@@ -97,7 +100,7 @@ Your response should be concise and directly answer the user's question while ad
         'Access-Control-Allow-Methods': 'POST, OPTIONS'
       },
       body: JSON.stringify({
-        response: data.candidates[0].content.parts[0].text
+        response: responseText
       })
     };
 
