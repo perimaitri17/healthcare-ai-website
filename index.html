@@ -222,14 +222,7 @@
             </div>
             
             <div class="chat-messages" id="chatMessages">
-                <div class="message ai">
-                    <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <div class="message-content">
-                        Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?
-                    </div>
-                </div>
+                <!-- Chat messages will be loaded here by JavaScript -->
             </div>
             
             <div class="typing-indicator message ai" id="typingIndicator">
@@ -265,6 +258,9 @@
     </div>
 
     <script>
+        // Define a constant for the localStorage key
+        const CHAT_HISTORY_KEY = 'medicarePlusChatHistory';
+
         document.addEventListener('DOMContentLoaded', function() {
             // Highlight the active navigation link based on the current page
             const currentPage = window.location.pathname.split('/').pop(); // e.g., "index.html"
@@ -276,7 +272,26 @@
                 }
             });
 
-            // Chatbot functionality (repeated on all pages)
+            // --- Chat History Management ---
+            let chatHistory = []; // Array to store message objects {sender: 'user'/'ai', text: 'message'}
+
+            function saveChatHistory() {
+                localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(chatHistory));
+            }
+
+            function loadChatHistory() {
+                const storedHistory = localStorage.getItem(CHAT_HISTORY_KEY);
+                if (storedHistory) {
+                    chatHistory = JSON.parse(storedHistory);
+                    chatHistory.forEach(msg => addMessage(msg.text, msg.sender, false)); // false to prevent saving again on load
+                } else {
+                    // Add initial AI welcome message if no history
+                    addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', false);
+                }
+            }
+            // --- End Chat History Management ---
+
+            // Chatbot functionality
             window.toggleChat = function() {
                 const widget = document.getElementById('chatWidget');
                 const toggle = document.getElementById('chatToggle');
@@ -296,7 +311,7 @@
                 
                 if (!message) return;
                 
-                addMessage(message, 'user');
+                addMessage(message, 'user', true); // Save user message
                 input.value = '';
                 
                 showTypingIndicator();
@@ -304,17 +319,13 @@
                 try {
                     const response = await callGeminiAPI(message);
                     hideTypingIndicator();
-                    addMessage(response, 'ai'); // Now capable of rendering HTML
+                    addMessage(response, 'ai', true); // Save AI response
                 } catch (error) {
                     hideTypingIndicator();
-                    addMessage('I apologize, but I\'m having trouble connecting right now. Please try again later or contact our support team at +91 11 2345 6789.', 'ai');
+                    addMessage('I apologize, but I\'m having trouble connecting right now. Please try again later or contact our support team at +91 11 2345 6789.', 'ai', true); // Save error message
                     console.error('Error:', error);
                 }
             }
-
-            // Note: sendPredefinedMessage now directly navigates, so no need to send message to AI
-            // window.sendPredefinedMessage = function(message) { ... } is removed from here
-            // as its functionality is now directly in the HTML onclick.
 
             async function callGeminiAPI(userMessage) {
                 const context = getWebsiteContext();
@@ -337,7 +348,8 @@
                 return data.response;
             }
 
-            function addMessage(message, sender) {
+            // Modified addMessage to handle saving to history
+            function addMessage(message, sender, saveToHistory = true) {
                 const messagesContainer = document.getElementById('chatMessages');
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${sender}`;
@@ -349,8 +361,7 @@
                 const content = document.createElement('div');
                 content.className = 'message-content';
                 
-                // IMPORTANT: For AI messages, use innerHTML to render clickable links.
-                // Be aware of XSS risks if AI output is not strictly controlled.
+                // For AI messages, use innerHTML to render clickable links.
                 if (sender === 'ai') {
                     content.innerHTML = message; 
                 } else {
@@ -362,6 +373,11 @@
                 messagesContainer.appendChild(messageDiv);
                 
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                if (saveToHistory) {
+                    chatHistory.push({ sender: sender, text: message });
+                    saveChatHistory();
+                }
             }
 
             function showTypingIndicator() {
@@ -375,8 +391,8 @@
             }
 
             function getWebsiteContext() {
-                // IMPORTANT: Instruct the AI to generate HTML links for navigation suggestions.
-                // For example: "You can find more details on our <a href='safety.html'>Safety Page</a>."
+                // IMPORTANT: This prompt is designed to be highly prescriptive for the AI.
+                // It explicitly asks for HTML <a> tags.
                 return `
                 You are MediCare Plus AI Assistant, a healthcare chatbot for our website.
                 The website has the following main pages:
@@ -385,35 +401,21 @@
                 - Dosage: dosage.html (Provides medication dosage information and a calculator for Acetaminophen, Ibuprofen, Amoxicillin)
                 - Contact: contact.html (Has contact form, address, phone, email, hours, social media links)
 
-                When suggesting navigation, please provide the full HTML link, e.g., <a href='safety.html'>Safety Page</a>.
-                Always provide helpful, accurate healthcare information while emphasizing that users should consult healthcare professionals for personalized medical advice. Never provide specific medical diagnoses or replace professional medical care.
+                Your response MUST always include a brief, helpful summary related to the user's question.
+                If the user's question clearly relates to one of the specific website pages (Home, Safety, Dosage, Contact), you MUST, without exception, embed a direct, clickable HTML link to that page within your summary. The link MUST be a standard HTML <a> tag with an 'href' attribute pointing to the correct .html file.
 
-                Here's the context about our services:
+                Here are examples of the EXACT HTML link format to use:
+                - For Safety: <a href='safety.html'>Safety Page</a>
+                - For Dosage: <a href='dosage.html'>Dosage Page</a>
+                - For Contact: <a href='contact.html'>Contact Page</a>
+                - For Home/General: <a href='index.html'>Home Page</a>
 
-                SAFETY INFORMATION:
-                - Medication storage: cool, dry places away from sunlight, in original containers
-                - Administration safety: verify patient identity, check expiration dates, confirm dosage
-                - Allergy management: maintain updated records, use identification systems
-                - Infection control: hand hygiene, PPE, sterile environments
-                - Emergency procedures: call emergency services immediately for medical emergencies
+                Combine the summary and the HTML link naturally within the response.
 
-                DOSAGE INFORMATION:
-                - Acetaminophen: Adults 325-650mg every 4-6 hours (max 3000mg/24h), Pediatric 10-15mg/kg every 4-6 hours
-                - Ibuprofen: Adults 200-400mg every 4-6 hours (max 1200mg/24h), Pediatric 5-10mg/kg every 6-8 hours
-                - Amoxicillin: Adults 250-500mg every 8 hours, Pediatric 20-40mg/kg/day divided
+                Example response for "Please show the contact form":
+                "To contact us, please visit our <a href='contact.html'>Contact Page</a> where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links. We're here to help! Remember to consult with healthcare professionals for personalized medical advice."
 
-                CONTACT INFORMATION:
-                - Address: 123 Healthcare Avenue, Medical District, Delhi 110001, India
-                - Phone: +91 11 2345 6789, Emergency: +91 11 9876 5432
-                - Email: info@medicareplus.com, support@medicareplus.com
-                - Hours: Mon-Fri 8AM-8PM, Weekend 9AM-5PM, Emergency 24/7
-
-                SERVICES:
-                - 24/7 AI-powered healthcare assistance
-                - Safety protocols and guidelines
-                - Medication dosage calculations
-                - Patient safety management
-                - Emergency support guidance
+                Always remember to emphasize that users should consult healthcare professionals for personalized medical advice.
                 `;
             }
 
@@ -423,6 +425,9 @@
                     sendMessage();
                 }
             });
+
+            // Load chat history when the page loads
+            loadChatHistory();
         });
     </script>
 </body>
