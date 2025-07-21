@@ -31,18 +31,24 @@ exports.handler = async (event, context) => {
     }
 
     // --- KEY CHANGE HERE: Even MORE explicit prompt for summary + HTML link ---
+    // The prompt is now highly prescriptive about including the exact HTML <a> tag.
     const prompt = `${userContext}
 
 User question: ${message}
 
 Your response MUST always include a brief, helpful summary related to the user's question.
-If the user's question clearly relates to one of the specific website pages (Home, Safety, Dosage, Contact), you MUST include a direct, clickable HTML link to that page within your summary.
+If the user's question clearly relates to one of the specific website pages (Home, Safety, Dosage, Contact), you MUST, without exception, embed a direct, clickable HTML link to that page within your summary. The link MUST be a standard HTML <a> tag with an 'href' attribute pointing to the correct .html file.
 
-Here are examples of how to include the link:
-- If the user asks about Safety: "Here's a quick overview of our safety protocols. You can find more details on our <a href='safety.html'>Safety Page</a>."
-- If the user asks about Dosage: "For information on medication dosages, including a calculator, please visit our <a href='dosage.html'>Dosage Page</a>."
-- If the user asks about Contact: "To contact us, please visit our <a href='contact.html'>Contact Page</a> where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links. We're here to help!"
-- If the user asks about Home/General: "Welcome to MediCare Plus! Our <a href='index.html'>Home Page</a> provides an overview of our services and features."
+Here are examples of the EXACT HTML link format to use:
+- For Safety: <a href='safety.html'>Safety Page</a>
+- For Dosage: <a href='dosage.html'>Dosage Page</a>
+- For Contact: <a href='contact.html'>Contact Page</a>
+- For Home/General: <a href='index.html'>Home Page</a>
+
+Combine the summary and the HTML link naturally within the response.
+
+Example response for "Please show the contact form":
+"To contact us, please visit our <a href='contact.html'>Contact Page</a> where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links. We're here to help! Remember to consult with healthcare professionals for personalized medical advice."
 
 Always remember to emphasize that users should consult healthcare professionals for personalized medical advice.
 `;
