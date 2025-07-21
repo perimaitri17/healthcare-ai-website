@@ -68,6 +68,16 @@
             border: 1px solid #e5e7eb;
             color: #374151;
         }
+        /* NEW: Style for links in AI messages */
+        .message.ai .message-content a {
+            color: #667eea;
+            text-decoration: underline;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        .message.ai .message-content a:hover {
+            color: #764ba2;
+        }
         .chat-toggle {
             width: 60px;
             height: 60px;
@@ -374,13 +384,33 @@
                     const response = await callGeminiAPI(message);
                     hideTypingIndicator();
                     addMessage(response, 'ai', true); // Save AI response
+                   
+                    // NEW: Check if the response contains navigation instructions and redirect if needed
+                    checkForNavigation(response);
                 } catch (error) {
                     hideTypingIndicator();
                     addMessage('I apologize, but I\'m having trouble connecting right now. Please try again later or contact our support team at +91 11 2345 6789.', 'ai', true); // Save error message
                     console.error('Error:', error);
                 }
             }
+// NEW: Function to check for navigation commands and redirect
+            function checkForNavigation(response) {
+                const navigationCommands = {
+                    'NAVIGATE_TO_HOME': 'index.html',
+                    'NAVIGATE_TO_SAFETY': 'safety.html', 
+                    'NAVIGATE_TO_DOSAGE': 'dosage.html',
+                    'NAVIGATE_TO_CONTACT': 'contact.html'
+                };
 
+                for (const [command, url] of Object.entries(navigationCommands)) {
+                    if (response.includes(command)) {
+                        setTimeout(() => {
+                            window.location.href = url;
+                        }, 2000); // 2-second delay to let user see the message
+                        break;
+                    }
+                }
+            }
             async function callGeminiAPI(userMessage) {
                 const context = getWebsiteContext();
                 const response = await fetch('/.netlify/functions/gemini-chat', {
@@ -463,8 +493,7 @@
             }
 
             function getWebsiteContext() {
-                // IMPORTANT: This prompt is designed to be highly prescriptive for the AI.
-                // It explicitly asks for HTML <a> tags.
+                // UPDATED: Enhanced prompt with navigation instructions
                 return `
                 You are MediCare Plus AI Assistant, a healthcare chatbot for our website.
                 The website has the following main pages:
@@ -473,8 +502,9 @@
                 - Dosage: dosage.html (Provides medication dosage information and a calculator for Acetaminophen, Ibuprofen, Amoxicillin)
                 - Contact: contact.html (Has contact form, address, phone, email, hours, social media links)
 
-                Your response MUST always include a brief, helpful summary related to the user's question.
-                If the user's question clearly relates to one of the specific website pages (Home, Safety, Dosage, Contact), you MUST, without exception, embed a direct, clickable HTML link to that page within your summary. The link MUST be a standard HTML <a> tag with an 'href' attribute pointing to the correct .html file.
+                NAVIGATION RULES:
+                1. Your response MUST always include a brief, helpful summary related to the user's question.
+                2. If the user's question clearly relates to one of the specific website pages (Home, Safety, Dosage, Contact), you MUST embed a direct, clickable HTML link to that page within your summary. The link MUST be a standard HTML <a> tag with an 'href' attribute pointing to the correct .html file.
 
                 Here are examples of the EXACT HTML link format to use:
                 - For Safety: <a href='safety.html'>Safety Page</a>
@@ -482,10 +512,17 @@
                 - For Contact: <a href='contact.html'>Contact Page</a>
                 - For Home/General: <a href='index.html'>Home Page</a>
 
-                Combine the summary and the HTML link naturally within the response.
+                3. REDIRECT FEATURE: If the user explicitly asks to be taken to a specific page (e.g., "take me to homepage", "go to safety page", "show me the contact form"), include the appropriate navigation command in your response:
+                - For Home: Include "NAVIGATE_TO_HOME" in your response
+                - For Safety: Include "NAVIGATE_TO_SAFETY" in your response
+                - For Dosage: Include "NAVIGATE_TO_DOSAGE" in your response
+                - For Contact: Include "NAVIGATE_TO_CONTACT" in your response
 
                 Example response for "Please show the contact form":
                 "To contact us, please visit our <a href='contact.html'>Contact Page</a> where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links. We're here to help! Remember to consult with healthcare professionals for personalized medical advice."
+
+                Example response for "take me to the homepage":
+                "I'll take you to our <a href='index.html'>Home Page</a> right away! NAVIGATE_TO_HOME You'll find information about our healthcare services, AI assistant features, and an overview of all our offerings. Remember to consult with healthcare professionals for personalized medical advice."
 
                 Always remember to emphasize that users should consult healthcare professionals for personalized medical advice.
                 `;
