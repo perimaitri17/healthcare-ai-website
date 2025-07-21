@@ -69,7 +69,7 @@
             color: #374151;
         }
         
-        /* NEW: Styling for AI chat links */
+        /* Styling for AI chat links */
         .message-content a {
             color: #667eea;
             text-decoration: underline;
@@ -517,7 +517,7 @@
 
             function getWebsiteContext() {
                 // IMPORTANT: This prompt is designed to be highly prescriptive for the AI.
-                // It explicitly asks for HTML <a> tags.
+                // It explicitly asks for HTML <a> tags and to display the full URL.
                 return `
                 You are MediCare Plus AI Assistant, a healthcare chatbot for our website.
                 The website has the following main pages:
@@ -529,19 +529,27 @@
                 Your response MUST always include a brief, helpful summary related to the user's question.
                 If the user's question clearly relates to one of the specific website pages (Home, Safety, Dosage, Contact), you MUST, without exception, embed a direct, clickable HTML link to that page within your summary. The link MUST be a standard HTML <a> tag with an 'href' attribute pointing to the correct .html file.
 
-                Here are examples of the EXACT HTML link format to use. You MUST follow this format precisely:
-                - For Safety: <a href='safety.html'>Safety Page</a>
-                - For Dosage: <a href='dosage.html'>Dosage Page</a>
-                - For Contact: <a href='contact.html'>Contact Page</a>
-                - For Home/General or Resources: <a href='index.html'>Home Page</a>
+                IMPORTANT: For ALL links (internal pages, downloadable PDFs, and external websites), you MUST display the full URL in plain text immediately after the clickable link, enclosed in parentheses.
+
+                Here are examples of the EXACT HTML link and URL text format to use. You MUST follow this format precisely:
+                - For Safety: <a href='safety.html'>Safety Page</a> (safety.html)
+                - For Dosage: <a href='dosage.html'>Dosage Page</a> (dosage.html)
+                - For Contact: <a href='contact.html'>Contact Page</a> (contact.html)
+                - For Home/General or Resources: <a href='index.html'>Home Page</a> (index.html)
+
+                For Downloadable PDFs (example):
+                - <a href='https://www.africau.edu/images/default/sample.pdf' download>First Aid Basics Guide</a> (https://www.africau.edu/images/default/sample.pdf)
+
+                For External Healthcare Websites (example):
+                - <a href='https://www.who.int/' target='_blank' rel='noopener noreferrer'>World Health Organization (WHO)</a> (https://www.who.int/)
 
                 Combine the summary and the HTML link naturally within the response.
 
                 Example response for "Please show the contact form":
-                "To contact us, please visit our <a href='contact.html'>Contact Page</a> where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links. We're here to help! Remember to consult with healthcare professionals for personalized medical advice."
+                "To contact us, please visit our <a href='contact.html'>Contact Page</a> (contact.html) where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links. We're here to help! Remember to consult with healthcare professionals for personalized medical advice."
 
                 Example response for "Where can I find health guides?":
-                "You can find various downloadable health guides and links to external healthcare organizations on our <a href='index.html'>Home Page</a>, under the 'Healthcare Resources' section. These include first aid basics, healthy living tips, and medication safety checklists."
+                "You can find various downloadable health guides and links to external healthcare organizations on our <a href='index.html'>Home Page</a> (index.html), under the 'Healthcare Resources' section. For example, you can download the <a href='https://www.africau.edu/images/default/sample.pdf' download>First Aid Basics Guide</a> (https://www.africau.edu/images/default/sample.pdf) or visit the <a href='https://www.cdc.gov/' target='_blank' rel='noopener noreferrer'>Centers for Disease Control and Prevention (CDC)</a> (https://www.cdc.gov/) website. These resources can help you with first aid basics, healthy living tips, and medication safety checklists."
 
                 Always remember to emphasize that users should consult healthcare professionals for personalized medical advice.
                 `;
