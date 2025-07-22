@@ -190,12 +190,17 @@
         .hero-gradient {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+        /* Logo clickable styling */
         .logo-link {
-            cursor: pointer;
-            transition: transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            space-x: 2;
+            text-decoration: none;
+            color: inherit;
+            transition: opacity 0.3s ease;
         }
         .logo-link:hover {
-            transform: scale(1.05);
+            opacity: 0.8;
         }
         /* Chat header button hover effects */
         .chat-header button:hover i {
@@ -414,6 +419,10 @@
         const CHAT_HISTORY_KEY = 'medicarePlusChatHistory';
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Get current domain for internal link detection
+            const currentDomain = window.location.origin;
+            const currentHost = window.location.hostname;
+            
             // Highlight the active navigation link based on the current page
             const currentPage = window.location.pathname.split('/').pop(); // e.g., "index.html"
             document.querySelectorAll('.nav-link').forEach(link => {
@@ -429,11 +438,10 @@
 
             function saveChatHistory() {
                 try {
-                    // In production, this would use localStorage
-                    // For demo purposes, we'll store in a variable
+                    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(chatHistory));
                     console.log('Chat History Saved:', chatHistory);
                 } catch (e) {
-                    console.error('Error saving chat history:', e);
+                    console.error('Error saving chat history to localStorage:', e);
                 }
             }
 
