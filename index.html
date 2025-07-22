@@ -145,6 +145,11 @@
         .logo-link:hover {
             transform: scale(1.05);
         }
+        /* Chat header button hover effects */
+        .chat-header button:hover i {
+            transform: scale(1.1);
+            transition: transform 0.2s ease;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -305,9 +310,16 @@
                     <h3 class="font-semibold">MediCare AI Assistant</h3>
                     <p class="text-sm opacity-90">Healthcare Support</p>
                 </div>
-                <button onclick="toggleChat()" class="text-white hover:text-gray-200">
-                    <i class="fas fa-times"></i>
-                </button>
+                <div class="flex items-center space-x-2">
+                    <!-- Delete chat history button -->
+                    <button onclick="clearChatHistory()" class="text-white hover:text-red-300 transition duration-200" title="Clear Chat History">
+                        <i class="fas fa-trash-alt text-sm"></i>
+                    </button>
+                    <!-- Close button -->
+                    <button onclick="toggleChat()" class="text-white hover:text-gray-200">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
             
             <div class="chat-messages" id="chatMessages">
@@ -393,6 +405,28 @@
                 }
             }
             // --- End Chat History Management ---
+
+            // Function to clear chat history
+            window.clearChatHistory = function() {
+                if (confirm('Are you sure you want to delete all chat history? This action cannot be undone.')) {
+                    // Clear the chat history array
+                    chatHistory = [];
+                    
+                    // Clear the messages container
+                    const messagesContainer = document.getElementById('chatMessages');
+                    if (messagesContainer) {
+                        messagesContainer.innerHTML = '';
+                    }
+                    
+                    // Save the cleared history (empty array)
+                    saveChatHistory();
+                    
+                    // Add welcome message back
+                    addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', false);
+                    
+                    console.log('Chat history cleared successfully');
+                }
+            }
 
             // Function to open chatbot (for AI Assistant card)
             window.openChatbot = function() {
