@@ -213,10 +213,11 @@
     <nav class="bg-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-2">
+               <!-- Made logo clickable -->
+                <a href="index.html" class="logo-link">
                     <i class="fas fa-heartbeat text-2xl text-indigo-600"></i>
-                    <span class="text-xl font-bold text-gray-800">MediCare Plus</span>
-                </div>
+                    <span class="text-xl font-bold text-gray-800 ml-2">MediCare Plus</span>
+                </a>
                 <div class="flex space-x-6">
                     <!-- Updated href attributes to point to new HTML files -->
                     <a href="index.html" class="nav-link text-gray-700 hover:text-indigo-600 font-medium" data-page="home">Home</a>
@@ -314,8 +315,8 @@
             </div>
         </section>
     </main>
-
-   <!-- AI Chatbot -->
+    
+<!-- AI Chatbot -->
     <div class="chat-container">
         <div class="chat-widget" id="chatWidget">
             <div class="chat-header">
@@ -396,13 +397,13 @@
             function saveChatHistory() {
                 try {
                     localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(chatHistory));
-                    console.log('Chat History Saved:', chatHistory);
+                    console.log('Chat History Saved:', chatHistory.length, 'messages');
                 } catch (e) {
                     console.error('Error saving chat history to localStorage:', e);
                 }
             }
 
-           function loadChatHistory() {
+            function loadChatHistory() {
                 const messagesContainer = document.getElementById('chatMessages');
                 // Ensure messagesContainer exists before clearing its content
                 if (messagesContainer) {
@@ -413,12 +414,31 @@
                 }
 
                 try {
-                    // For demo purposes, start with welcome message
-                    addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', false);
+                    // Load saved chat history from localStorage
+                    const savedHistory = localStorage.getItem(CHAT_HISTORY_KEY);
+                    
+                    if (savedHistory) {
+                        chatHistory = JSON.parse(savedHistory);
+                        console.log('Loaded chat history:', chatHistory.length, 'messages');
+                        
+                        // Display all saved messages
+                        chatHistory.forEach(msg => {
+                            addMessage(msg.text, msg.sender, false); // false = don't save again
+                        });
+                        
+                        // If there are saved messages, don't add welcome message
+                        if (chatHistory.length > 0) {
+                            return;
+                        }
+                    }
+                    
+                    // Only add welcome message if no history exists
+                    addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', true);
+                    
                 } catch (e) {
                     console.error('Error loading chat history:', e);
                     // Fallback: Add initial AI message if loading fails
-                    addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', false);
+                    addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', true);
                 }
             }
             // --- End Chat History Management ---
@@ -435,15 +455,20 @@
                         messagesContainer.innerHTML = '';
                     }
                     
-                    // Save the cleared history (empty array)
-                    saveChatHistory();
+                    // Remove from localStorage
+                    try {
+                        localStorage.removeItem(CHAT_HISTORY_KEY);
+                    } catch (e) {
+                        console.error('Error clearing localStorage:', e);
+                    }
                     
                     // Add welcome message back
-                    addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', false);
+                    addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', true);
                     
                     console.log('Chat history cleared successfully');
                 }
             }
+
             // Function to open chatbot (for AI Assistant card)
             window.openChatbot = function() {
                 const widget = document.getElementById('chatWidget');
@@ -456,6 +481,7 @@
                     console.error('Chat widget element not found!');
                 }
             }
+
             // Chatbot functionality
             window.toggleChat = function() {
                 const widget = document.getElementById('chatWidget');
@@ -576,6 +602,7 @@
                
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
+                // Save to history and localStorage
                 if (saveToHistory) {
                     chatHistory.push({ sender: sender, text: message });
                     saveChatHistory();
@@ -727,7 +754,7 @@
 
                 4. INTELLIGENT RESPONSE FORMAT:
                    When user asks about safety checklists:
-                   A printable checklist to help you ensure safe medication storage and administration at home.
+                   A printable checklist to help you ensure safe medication storage and administration at home with below URL.
                    https://www.ets.org/s/gre/pdf/gre_info_test_centers.pdf
 
                 5. REDIRECT FEATURE: Only use these when user explicitly asks to GO TO or BE TAKEN TO a page:
