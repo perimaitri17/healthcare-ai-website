@@ -69,19 +69,71 @@
             color: #374151;
         }
         
-        /* Styling for AI chat links */
-        .message-content a {
+         /* Enhanced styling for ALL links in AI messages */
+        .message.ai .message-content a {
             color: #667eea;
             text-decoration: underline;
-            font-weight: 500;
-            cursor: pointer;
-            transition: color 0.2s ease;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            word-break: break-all;
+            display: inline-block;
+            margin: 2px 4px 2px 0;
+            padding: 4px 8px;
+            background-color: rgba(102, 126, 234, 0.1);
+            border-radius: 6px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
         }
-        .message-content a:hover {
-            color: #4f46e5;
-            text-decoration: none;
+        .message.ai .message-content a:hover {
+            color: #764ba2;
+            background-color: rgba(118, 75, 162, 0.15);
+            border-color: rgba(118, 75, 162, 0.3);
+            transform: translateY(-1px);
         }
-        
+
+        /* Special styling for internal page links */
+        .message.ai .message-content a.internal-link {
+            background-color: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+            border-color: rgba(34, 197, 94, 0.2);
+        }
+        .message.ai .message-content a.internal-link:hover {
+            background-color: rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #15803d;
+        }
+
+        /* Style for external URL links with full URL display */
+        .message.ai .message-content a.external-link {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            background-color: #f8fafc;
+            color: #1e40af;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin: 4px 0;
+            display: inline-block;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        .message.ai .message-content a.external-link:hover {
+            background-color: #f1f5f9;
+            border-color: #1e40af;
+            color: #1d4ed8;
+        }
+
+        /* Style for downloadable content links */
+        .message.ai .message-content a.download-link {
+            background-color: rgba(245, 101, 101, 0.1);
+            color: #dc2626;
+            border-color: rgba(245, 101, 101, 0.2);
+        }
+        .message.ai .message-content a.download-link:hover {
+            background-color: rgba(245, 101, 101, 0.15);
+            border-color: rgba(245, 101, 101, 0.3);
+            color: #b91c1c;
+        }
+   
         .chat-toggle {
             width: 60px;
             height: 60px;
@@ -474,37 +526,62 @@
                 
                 showTypingIndicator();
                 
+                
                 try {
-                    // Simulate AI response for demo purposes
-                    setTimeout(() => {
-                        hideTypingIndicator();
-                        const response = generateDemoResponse(message);
-                        addMessage(response, 'ai', true);
-                    }, 1000 + Math.random() * 2000);
+                    const response = await callGeminiAPI(message);
+                    hideTypingIndicator();
+                    addMessage(response, 'ai', true); // Save AI response
+                   
+                    // NEW: Check if the response contains navigation instructions and redirect if needed
+                    checkForNavigation(response);
                 } catch (error) {
                     hideTypingIndicator();
-                    addMessage('I apologize, but I\'m having trouble connecting right now. Please try again later or contact our support team at +91 11 2345 6789.', 'ai', true);
+                    addMessage('I apologize, but I\'m having trouble connecting right now. Please try again later or contact our support team at +91 11 2345 6789.', 'ai', true); // Save error message
                     console.error('Error:', error);
                 }
             }
 
-            function generateDemoResponse(userMessage) {
-                const message = userMessage.toLowerCase();
-                
-                if (message.includes('safety') || message.includes('safe')) {
-                    return "For medication safety information, please visit our <a href='safety.html'>Safety Page</a> where you'll find comprehensive guidelines on medication storage, administration, and emergency procedures. Always consult with healthcare professionals for personalized medical advice.";
-                } else if (message.includes('dosage') || message.includes('dose') || message.includes('medication')) {
-                    return "For dosage information and our medication calculator, please visit our <a href='dosage.html'>Dosage Page</a>. You'll find tools to calculate proper dosages for common medications like Acetaminophen, Ibuprofen, and Amoxicillin. Remember to always consult with healthcare professionals for personalized medical advice.";
-                } else if (message.includes('contact') || message.includes('reach') || message.includes('phone') || message.includes('email')) {
-                    return "To contact us, please visit our <a href='contact.html'>Contact Page</a> where you will find our contact form, address, phone numbers, email addresses, business hours, and social media links. We're here to help! Remember to consult with healthcare professionals for personalized medical advice.";
-                } else if (message.includes('resource') || message.includes('guide') || message.includes('pdf') || message.includes('download')) {
-                    return "You can find various downloadable health guides and links to external healthcare organizations on our <a href='index.html'>Home Page</a>, under the 'Healthcare Resources' section. These resources include first aid basics, healthy living tips, and medication safety checklists.";
-                } else {
-                    return "Thank you for your question! I can help you with healthcare information, medication safety, dosage calculations, and more. For specific concerns, please visit our <a href='safety.html'>Safety</a>, <a href='dosage.html'>Dosage</a>, or <a href='contact.html'>Contact</a> pages. Always consult with healthcare professionals for personalized medical advice.";
+            // NEW: Function to check for navigation commands and redirect
+            function checkForNavigation(response) {
+                const navigationCommands = {
+                    'NAVIGATE_TO_HOME': 'index.html',
+                    'NAVIGATE_TO_SAFETY': 'safety.html',
+                    'NAVIGATE_TO_DOSAGE': 'dosage.html',
+                    'NAVIGATE_TO_CONTACT': 'contact.html'
+                };
+
+                for (const [command, url] of Object.entries(navigationCommands)) {
+                    if (response.includes(command)) {
+                        setTimeout(() => {
+                            window.location.href = url;
+                        }, 2000); // 2-second delay to let user see the message
+                        break;
+                    }
                 }
             }
 
-            // Modified addMessage to handle saving to history
+            async function callGeminiAPI(userMessage) {
+                const context = getWebsiteContext();
+                const response = await fetch('/.netlify/functions/gemini-chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: userMessage,
+                        context: context
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorDetails = await response.text();
+                    console.error('API request failed:', response.status, errorDetails);
+                    throw new Error(`API request failed: ${response.status} - ${errorDetails}`);
+                }
+
+                const data = await response.json();
+                return data.response;
+            }
+
+            // Enhanced addMessage function to handle URL formatting with better link detection
             function addMessage(message, sender, saveToHistory = true) {
                 const messagesContainer = document.getElementById('chatMessages');
                 // Ensure messagesContainer exists before adding messages
@@ -515,31 +592,112 @@
 
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${sender}`;
-                
+               
                 const avatar = document.createElement('div');
                 avatar.className = 'w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm';
                 avatar.innerHTML = sender === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
-                
+               
                 const content = document.createElement('div');
                 content.className = 'message-content';
-                
-                // For AI messages, use innerHTML to render clickable links.
+               
+                // For AI messages, process URLs and use innerHTML to render clickable links
                 if (sender === 'ai') {
-                    content.innerHTML = message; 
+                    const processedMessage = processLinksInMessage(message);
+                    content.innerHTML = processedMessage;
                 } else {
                     content.textContent = message;
                 }
-                
+               
                 messageDiv.appendChild(avatar);
                 messageDiv.appendChild(content);
                 messagesContainer.appendChild(messageDiv);
-                
+               
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
                 if (saveToHistory) {
                     chatHistory.push({ sender: sender, text: message });
                     saveChatHistory();
                 }
+            }
+
+            // IMPROVED function to process all types of links in messages
+            function processLinksInMessage(message) {
+                let processedMessage = message;
+                
+                // Step 1: Preserve existing HTML links and improve them with proper classes
+                processedMessage = processedMessage.replace(/<a\s+([^>]*?)href=['"]([^'"]*?)['"]([^>]*?)>(.*?)<\/a>/gi, (match, beforeHref, url, afterHref, linkText) => {
+                    // Determine link type and add appropriate class
+                    let linkClass = '';
+                    
+                    if (url.includes('.html') || url.startsWith('#') || (!url.includes('http') && !url.includes('://'))) {
+                        // Internal links
+                        linkClass = 'internal-link';
+                        // For internal links, show the full URL if it's not a simple filename
+                        if (url.includes('.html') && !linkText.includes(currentDomain)) {
+                            linkText = `${linkText} (${currentDomain}/${url})`;
+                        }
+                    } else if (url.includes('.pdf') || url.includes('.doc') || url.includes('.xls') || url.includes('download')) {
+                        // Download links
+                        linkClass = 'download-link';
+                        // Show full URL for download links
+                        if (linkText !== url) {
+                            linkText = `${linkText} (${url})`;
+                        }
+                    } else {
+                        // External links
+                        linkClass = 'external-link';
+                        // Show full URL for external links
+                        if (linkText !== url) {
+                            linkText = `${linkText} (${url})`;
+                        }
+                    }
+                    
+                    return `<a ${beforeHref}href="${url}" class="${linkClass}" ${afterHref} target="_blank" rel="noopener noreferrer">${linkText}</a>`;
+                });
+                
+                // Step 2: Convert standalone URLs that aren't already in HTML tags
+                const urlRegex = /(?<!href=['"])(https?:\/\/[^\s<>"']+)/gi;
+                
+                processedMessage = processedMessage.replace(urlRegex, (url) => {
+                    // Check if this URL is already inside an HTML tag
+                    const beforeUrl = processedMessage.substring(0, processedMessage.indexOf(url));
+                    const lastOpenTag = beforeUrl.lastIndexOf('<');
+                    const lastCloseTag = beforeUrl.lastIndexOf('>');
+                    
+                    // If we're inside an HTML tag, don't convert
+                    if (lastOpenTag > lastCloseTag) {
+                        return url;
+                    }
+                    
+                    // Determine link type for standalone URLs
+                    let linkClass = 'external-link';
+                    if (url.includes('.pdf') || url.includes('.doc') || url.includes('.xls') || url.includes('download')) {
+                        linkClass = 'download-link';
+                    }
+                    
+                    // Convert standalone URLs to clickable links with full URL display
+                    return `<a href="${url}" class="${linkClass}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+                });
+
+                // Step 3: Convert internal page references to proper links
+                const internalPageRegex = /\b(Safety Page|Dosage Page|Contact Page|Home Page)\b/gi;
+                processedMessage = processedMessage.replace(internalPageRegex, (match) => {
+                    const pageMap = {
+                        'Safety Page': 'safety.html',
+                        'Dosage Page': 'dosage.html',
+                        'Contact Page': 'contact.html',
+                        'Home Page': 'index.html'
+                    };
+                    
+                    const fileName = pageMap[match];
+                    if (fileName) {
+                        const fullUrl = `${currentDomain}/${fileName}`;
+                        return `<a href="${fileName}" class="internal-link">${match} (${fullUrl})</a>`;
+                    }
+                    return match;
+                });
+                
+                return processedMessage;
             }
 
             function showTypingIndicator() {
@@ -562,6 +720,71 @@
                 } else {
                     console.error('Typing indicator element not found!');
                 }
+            }
+
+            function getWebsiteContext() {
+                // UPDATED: Enhanced context with better search patterns and link formatting
+                return `
+                You are MediCare Plus AI Assistant, a healthcare chatbot for our website.
+                Current website domain: ${currentDomain}
+                
+                The website has the following main pages:
+                - Home: index.html (Overview, services, about us)
+                - Safety: safety.html (Medication storage, administration safety, allergy management, infection control, emergency procedures, safety checklists)
+                - Dosage: dosage.html (Medication dosage calculators for Acetaminophen, Ibuprofen, Amoxicillin, dosing guidelines)
+                - Contact: contact.html (Contact form, address: 123 Healthcare Street, New Delhi 110001, phone: +91 11 2345 6789, email: info@medicareplus.com, hours, social media)
+
+                ENHANCED SEARCH INTELLIGENCE - Match user queries to appropriate content:
+                
+                For SAFETY-related queries, keywords, or requests:
+                - "safety", "guidelines", "medication safety", "storage", "administration", "allergy", "infection control", "emergency", "procedures", "protocols"
+                - Always provide comprehensive safety information AND suggest the Safety Page
+                
+                For DOSAGE-related queries:
+                - "dosage", "dose", "calculator", "how much", "medication amount", "acetaminophen", "ibuprofen", "amoxicillin", "dosing"
+                - Always provide dosage guidance AND suggest the Dosage Page with calculator
+                
+                For CONTACT-related queries:
+                - "contact", "phone", "email", "address", "location", "hours", "reach", "support"
+                - Always provide contact information AND suggest the Contact Page
+                
+                LINK FORMATTING RULES (CRITICAL - Follow exactly):
+                
+                1. For internal website navigation, format as:
+                   <a href='safety.html'>Safety Page</a>
+                   <a href='dosage.html'>Dosage Page</a>
+                   <a href='contact.html'>Contact Page</a>
+                   <a href='index.html'>Home Page</a>
+                   
+                2. For external links, ALWAYS provide the complete URL as plain text:
+                   https://www.cdc.gov/medicationsafety/
+                   https://www.fda.gov/drugs/information-consumers-and-patients-drugs/
+                   
+                3. For downloadable content, include the full URL:
+                   https://www.who.int/publications/medication-safety-guidelines.pdf
+
+                4. INTELLIGENT RESPONSE FORMAT:
+                   When user asks about safety checklists:
+                   A printable checklist to help you ensure safe medication storage and administration at home.
+                   https://www.ets.org/s/gre/pdf/gre_info_test_centers.pdf
+
+                5. REDIRECT FEATURE: Only use these when user explicitly asks to GO TO or BE TAKEN TO a page:
+                   - For Home: Include "NAVIGATE_TO_HOME" 
+                   - For Safety: Include "NAVIGATE_TO_SAFETY"
+                   - For Dosage: Include "NAVIGATE_TO_DOSAGE" 
+                   - For Contact: Include "NAVIGATE_TO_CONTACT"
+
+                RESPONSE GUIDELINES:
+                - Always provide helpful content first, then suggest relevant pages
+                - Match user intent intelligently (safety queries → safety content + Safety Page)
+                - Include both internal pages and external authoritative sources when relevant
+                - Show full URLs for external resources to build trust
+                - Be conversational but professional
+                - Always emphasize consulting healthcare professionals for personalized advice
+                - For emergency situations, always direct to emergency services first
+
+                Remember: The JavaScript will automatically format all links to show full URLs, so focus on providing the right content and appropriate link references.
+                `;
             }
 
             // Enter key support for chat
