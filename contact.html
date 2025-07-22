@@ -381,9 +381,9 @@
             const currentHost = window.location.hostname;
             
             // Highlight the active navigation link based on the current page
-            const currentPage = window.location.pathname.split('/').pop(); // e.g., "safety.html"
+            const currentPage = window.location.pathname.split('/').pop(); // e.g., "contact.html"
             document.querySelectorAll('.nav-link').forEach(link => {
-                if (link.getAttribute('href') === currentPage || (currentPage === '' && link.getAttribute('href') === 'index.html')) {
+                if (link.getAttribute('href') === currentPage || (currentPage === '' && link.getAttribute('href') === 'contact.html')) {
                     link.classList.add('active');
                 } else {
                     link.classList.remove('active');
