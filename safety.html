@@ -204,6 +204,11 @@
         .logo-link:hover {
             opacity: 0.8;
         }
+        /* Chat header button hover effects */
+        .chat-header button:hover i {
+            transform: scale(1.1);
+            transition: transform 0.2s ease;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -291,7 +296,7 @@
         </section>
     </main>
 
-    <!-- AI Chatbot (Crucial: This entire div must be present in ALL your HTML files) -->
+     <!-- AI Chatbot -->
     <div class="chat-container">
         <div class="chat-widget" id="chatWidget">
             <div class="chat-header">
@@ -299,15 +304,22 @@
                     <h3 class="font-semibold">MediCare AI Assistant</h3>
                     <p class="text-sm opacity-90">Healthcare Support</p>
                 </div>
-                <button onclick="(() => toggleChat())()" class="text-white hover:text-gray-200">
-                    <i class="fas fa-times"></i>
-                </button>
+                <div class="flex items-center space-x-2">
+                    <!-- Delete chat history button -->
+                    <button onclick="clearChatHistory()" class="text-white hover:text-red-300 transition duration-200" title="Clear Chat History">
+                        <i class="fas fa-trash-alt text-sm"></i>
+                    </button>
+                    <!-- Close button -->
+                    <button onclick="toggleChat()" class="text-white hover:text-gray-200">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
-           
+            
             <div class="chat-messages" id="chatMessages">
                 <!-- Chat messages will be loaded here by JavaScript -->
             </div>
-           
+            
             <div class="typing-indicator message ai" id="typingIndicator">
                 <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm">
                     <i class="fas fa-robot"></i>
@@ -371,7 +383,7 @@
                 }
             }
 
-            function loadChatHistory() {
+           function loadChatHistory() {
                 const messagesContainer = document.getElementById('chatMessages');
                 // Ensure messagesContainer exists before clearing its content
                 if (messagesContainer) {
@@ -382,23 +394,49 @@
                 }
 
                 try {
-                    const storedHistory = localStorage.getItem(CHAT_HISTORY_KEY);
-                    if (storedHistory) {
-                        chatHistory = JSON.parse(storedHistory);
-                        console.log('Chat History Loaded:', chatHistory);
-                        chatHistory.forEach(msg => addMessage(msg.text, msg.sender, false)); // false to prevent saving again on load
-                    } else {
-                        // Add initial AI welcome message if no history
-                        addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', false);
-                    }
+                    // For demo purposes, start with welcome message
+                    addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', false);
                 } catch (e) {
-                    console.error('Error loading chat history from localStorage:', e);
+                    console.error('Error loading chat history:', e);
                     // Fallback: Add initial AI message if loading fails
                     addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', false);
                 }
             }
             // --- End Chat History Management ---
 
+            // Function to clear chat history
+            window.clearChatHistory = function() {
+                if (confirm('Are you sure you want to delete all chat history? This action cannot be undone.')) {
+                    // Clear the chat history array
+                    chatHistory = [];
+                    
+                    // Clear the messages container
+                    const messagesContainer = document.getElementById('chatMessages');
+                    if (messagesContainer) {
+                        messagesContainer.innerHTML = '';
+                    }
+                    
+                    // Save the cleared history (empty array)
+                    saveChatHistory();
+                    
+                    // Add welcome message back
+                    addMessage("Hello! I'm your MediCare AI Assistant. I can help you with healthcare questions, medication information, safety guidelines, and more. How can I assist you today?", 'ai', false);
+                    
+                    console.log('Chat history cleared successfully');
+                }
+            }
+            // Function to open chatbot (for AI Assistant card)
+            window.openChatbot = function() {
+                const widget = document.getElementById('chatWidget');
+                const toggle = document.getElementById('chatToggle');
+                
+                if (widget) {
+                    widget.style.display = 'flex';
+                    if (toggle) toggle.style.display = 'none';
+                } else {
+                    console.error('Chat widget element not found!');
+                }
+            }
             // Chatbot functionality
             window.toggleChat = function() {
                 const widget = document.getElementById('chatWidget');
@@ -642,7 +680,7 @@
                 ENHANCED SEARCH INTELLIGENCE - Match user queries to appropriate content:
                 
                 For SAFETY-related queries, keywords, or requests:
-                - "safety", "checklist", "guidelines", "medication safety", "storage", "administration", "allergy", "infection control", "emergency", "procedures", "protocols"
+                - "safety", "guidelines", "medication safety", "storage", "administration", "allergy", "infection control", "emergency", "procedures", "protocols"
                 - Always provide comprehensive safety information AND suggest the Safety Page
                 
                 For DOSAGE-related queries:
@@ -669,14 +707,9 @@
                    https://www.who.int/publications/medication-safety-guidelines.pdf
 
                 4. INTELLIGENT RESPONSE FORMAT:
-                   When user asks about safety checklists, medication safety, or safety guidelines:
-                   "Here's important safety information: [provide safety content]
-                   
-                   For comprehensive safety guidelines and checklists, visit our <a href='safety.html'>Safety Page</a>
-                   
-                   Additional external resources:
-                   https://www.cdc.gov/medicationsafety/
-                   https://www.fda.gov/drugs/safe-disposal-medicines/"
+                   When user asks about safety checklists:
+                   A printable checklist to help you ensure safe medication storage and administration at home.
+                   https://www.ets.org/s/gre/pdf/gre_info_test_centers.pdf
 
                 5. REDIRECT FEATURE: Only use these when user explicitly asks to GO TO or BE TAKEN TO a page:
                    - For Home: Include "NAVIGATE_TO_HOME" 
