@@ -754,70 +754,395 @@
                 }
             }
 
-            function getWebsiteContext() {
-                // UPDATED: Enhanced context with better search patterns and link formatting
-                return `
-                You are MediCare Plus AI Assistant, a healthcare chatbot for our website.
-                Current website domain: ${currentDomain}
-                
-                The website has the following main pages:
-                - Home: index.html (Overview, services, about us)
-                - Safety: safety.html (Medication storage, administration safety, allergy management, infection control, emergency procedures, safety checklists)
-                - Dosage: dosage.html (Medication dosage calculators for Acetaminophen, Ibuprofen, Amoxicillin, dosing guidelines)
-                - Contact: contact.html (Contact form, address: 123 Healthcare Street, New Delhi 110001, phone: +91 11 2345 6789, email: info@medicareplus.com, hours, social media)
+               // Enhanced MediCare Plus AI Assistant with Intelligent Pattern Matching
+class MediCarePlusAI {
+    constructor() {
+        this.currentDomain = window.location.hostname || 'medicareplus.com';
+        this.initializeKnowledgeBase();
+    }
 
-                ENHANCED SEARCH INTELLIGENCE - Match user queries to appropriate content:
-                
-                For SAFETY-related queries, keywords, or requests:
-                - "safety", "guidelines", "medication safety", "storage", "administration", "allergy", "infection control", "emergency", "procedures", "protocols"
-                - Always provide comprehensive safety information AND suggest the Safety Page
-                
-                For DOSAGE-related queries:
-                - "dosage", "dose", "calculator", "how much", "medication amount", "acetaminophen", "ibuprofen", "amoxicillin", "dosing"
-                - Always provide dosage guidance AND suggest the Dosage Page with calculator
-                
-                For CONTACT-related queries:
-                - "contact", "phone", "email", "address", "location", "hours", "reach", "support"
-                - Always provide contact information AND suggest the Contact Page
-                
-                LINK FORMATTING RULES (CRITICAL - Follow exactly):
-                
-                1. For internal website navigation, format as:
-                   <a href='safety.html'>Safety Page</a>
-                   <a href='dosage.html'>Dosage Page</a>
-                   <a href='contact.html'>Contact Page</a>
-                   <a href='index.html'>Home Page</a>
-                   
-                2. For external links, ALWAYS provide the complete URL as plain text:
-                   https://www.cdc.gov/medicationsafety/
-                   https://www.fda.gov/drugs/information-consumers-and-patients-drugs/
-                   
-                3. For downloadable content, include the full URL:
-                   https://www.who.int/publications/medication-safety-guidelines.pdf
-
-                4. INTELLIGENT RESPONSE FORMAT:
-                   When user asks about safety checklists:
-                   A printable checklist to help you ensure safe medication storage and administration at home.
-                   https://www.ets.org/s/gre/pdf/gre_info_test_centers.pdf
-
-                5. REDIRECT FEATURE: Only use these when user explicitly asks to GO TO or BE TAKEN TO a page:
-                   - For Home: Include "NAVIGATE_TO_HOME" 
-                   - For Safety: Include "NAVIGATE_TO_SAFETY"
-                   - For Dosage: Include "NAVIGATE_TO_DOSAGE" 
-                   - For Contact: Include "NAVIGATE_TO_CONTACT"
-
-                RESPONSE GUIDELINES:
-                - Always provide helpful content first, then suggest relevant pages
-                - Match user intent intelligently (safety queries → safety content + Safety Page)
-                - Include both internal pages and external authoritative sources when relevant
-                - Show full URLs for external resources to build trust
-                - Be conversational but professional
-                - Always emphasize consulting healthcare professionals for personalized advice
-                - For emergency situations, always direct to emergency services first
-
-                Remember: The JavaScript will automatically format all links to show full URLs, so focus on providing the right content and appropriate link references.
-                `;
+    initializeKnowledgeBase() {
+        // Comprehensive knowledge base with pattern matching
+        this.knowledgeBase = {
+            safety: {
+                patterns: [
+                    /safety|safe|storage|store|administration|administer|allergy|allergic|infection|emergency|procedure|protocol|guideline|secure|protect/i,
+                    /how to store|where to keep|medication safety|drug safety|side effects|adverse/i
+                ],
+                content: {
+                    general: "Medication safety is crucial for effective treatment. Key principles include proper storage, correct administration, allergy awareness, and infection control.",
+                    storage: "Store medications in cool, dry places away from children. Refrigerated medications should be kept at 2-8°C. Never store in bathrooms or cars.",
+                    administration: "Always follow prescribed dosages, timing, and administration routes. Wash hands before handling medications.",
+                    allergies: "Always inform healthcare providers of known allergies. Wear medical alert jewelry if you have severe allergies.",
+                    emergency: "In case of overdose or severe reaction, call emergency services immediately. Keep poison control numbers handy."
+                },
+                resources: [
+                    "https://www.cdc.gov/medicationsafety/",
+                    "https://www.fda.gov/drugs/information-consumers-and-patients-drugs/",
+                    "https://www.who.int/publications/medication-safety-guidelines.pdf"
+                ],
+                page: "safety.html"
+            },
+            
+            dosage: {
+                patterns: [
+                    /dosage|dose|calculator|how much|amount|mg|ml|tablet|capsule|acetaminophen|ibuprofen|amoxicillin|dosing/i,
+                    /calculate|weight based|pediatric dose|adult dose|frequency/i
+                ],
+                content: {
+                    general: "Proper dosing is essential for medication effectiveness and safety. Dosages vary by age, weight, and medical condition.",
+                    acetaminophen: "Adults: 325-650mg every 4-6 hours, max 3000mg/day. Children: 10-15mg/kg every 4-6 hours.",
+                    ibuprofen: "Adults: 200-400mg every 4-6 hours, max 1200mg/day. Children: 5-10mg/kg every 6-8 hours.",
+                    amoxicillin: "Adults: 250-500mg every 8 hours. Children: 20-40mg/kg/day divided into 3 doses.",
+                    warning: "These are general guidelines. Always consult your healthcare provider for personalized dosing."
+                },
+                resources: [
+                    "https://www.drugs.com/dosage/",
+                    "https://www.rxlist.com/drug-dosage/article.htm",
+                    "https://pediatricdosing.com/calculator"
+                ],
+                page: "dosage.html"
+            },
+            
+            contact: {
+                patterns: [
+                    /contact|phone|email|address|location|hours|reach|support|help|call|visit/i,
+                    /where are you|how to reach|customer service|support team/i
+                ],
+                content: {
+                    address: "123 Healthcare Street, New Delhi 110001",
+                    phone: "+91 11 2345 6789",
+                    email: "info@medicareplus.com",
+                    hours: "Monday-Friday: 9:00 AM - 6:00 PM, Saturday: 9:00 AM - 2:00 PM",
+                    emergency: "For medical emergencies, call 102 or visit the nearest emergency room"
+                },
+                page: "contact.html"
+            },
+            
+            downloads: {
+                patterns: [
+                    /download|pdf|checklist|form|resource|material|guide|handbook|manual|document/i,
+                    /printable|print|save|file|attachment/i
+                ],
+                resources: [
+                    {
+                        name: "Medication Safety Checklist",
+                        url: "https://www.who.int/publications/medication-safety-guidelines.pdf",
+                        description: "Comprehensive safety checklist for home medication management"
+                    },
+                    {
+                        name: "Dosage Calculator Guide",
+                        url: "https://pediatricdosing.com/calculator-guide.pdf",
+                        description: "Step-by-step guide for calculating pediatric dosages"
+                    },
+                    {
+                        name: "Emergency Contact Form",
+                        url: "https://www.medicareplus.com/forms/emergency-contact.pdf",
+                        description: "Fill out and keep handy for emergencies"
+                    },
+                    {
+                        name: "Allergy Information Card",
+                        url: "https://www.medicareplus.com/forms/allergy-card.pdf",
+                        description: "Printable card to carry with important allergy information"
+                    },
+                    {
+                        name: "Medication Schedule Template",
+                        url: "https://www.medicareplus.com/forms/medication-schedule.pdf",
+                        description: "Organize your daily medication routine"
+                    }
+                ]
+            },
+            
+            exit: {
+                patterns: [
+                    /exit|quit|bye|goodbye|close|end|stop|leave|done|finish/i,
+                    /thank you|thanks|that's all|no more questions/i
+                ],
+                responses: [
+                    "Thank you for using MediCare Plus AI Assistant! Remember to always consult with healthcare professionals for personalized medical advice.",
+                    "Take care! If you need any medical assistance in the future, don't hesitate to reach out to our support team.",
+                    "Goodbye! Stay safe and remember - when in doubt about medications, always ask your doctor or pharmacist.",
+                    "Have a great day! Keep our contact information handy: +91 11 2345 6789 for any urgent questions."
+                ]
             }
+        };
+        
+        // Emergency keywords that should trigger immediate emergency response
+        this.emergencyPatterns = [
+            /overdose|poisoning|allergic reaction|can't breathe|chest pain|unconscious|emergency/i,
+            /severe reaction|anaphylaxis|cardiac|stroke|seizure/i
+        ];
+    }
+
+    analyzeQuery(userInput) {
+        const input = userInput.toLowerCase().trim();
+        
+        // Check for emergency first
+        if (this.emergencyPatterns.some(pattern => pattern.test(input))) {
+            return { type: 'emergency', confidence: 1.0 };
+        }
+        
+        // Check for navigation requests
+        if (/go to|take me to|navigate to|open|show me the/i.test(input)) {
+            return { type: 'navigation', confidence: 0.9 };
+        }
+        
+        // Analyze against knowledge base patterns
+        const categories = Object.keys(this.knowledgeBase);
+        const matches = [];
+        
+        for (const category of categories) {
+            const patterns = this.knowledgeBase[category].patterns;
+            if (patterns) {
+                for (const pattern of patterns) {
+                    const match = input.match(pattern);
+                    if (match) {
+                        matches.push({
+                            category,
+                            confidence: this.calculateConfidence(match, input),
+                            matchedText: match[0]
+                        });
+                    }
+                }
+            }
+        }
+        
+        // Sort by confidence and return best match
+        matches.sort((a, b) => b.confidence - a.confidence);
+        return matches.length > 0 ? matches[0] : { type: 'general', confidence: 0.1 };
+    }
+    
+    calculateConfidence(match, input) {
+        // Simple confidence calculation based on match length and position
+        const matchLength = match[0].length;
+        const inputLength = input.length;
+        const position = match.index;
+        
+        let confidence = matchLength / inputLength;
+        
+        // Boost confidence if match is at the beginning
+        if (position === 0) confidence *= 1.2;
+        
+        // Boost confidence for exact matches
+        if (matchLength === inputLength) confidence *= 1.5;
+        
+        return Math.min(confidence, 1.0);
+    }
+
+    generateResponse(userInput) {
+        const analysis = this.analyzeQuery(userInput);
+        
+        switch (analysis.type || analysis.category) {
+            case 'emergency':
+                return this.generateEmergencyResponse();
+                
+            case 'navigation':
+                return this.generateNavigationResponse(userInput);
+                
+            case 'safety':
+                return this.generateSafetyResponse(userInput);
+                
+            case 'dosage':
+                return this.generateDosageResponse(userInput);
+                
+            case 'contact':
+                return this.generateContactResponse();
+                
+            case 'downloads':
+                return this.generateDownloadsResponse();
+                
+            case 'exit':
+                return this.generateExitResponse();
+                
+            default:
+                return this.generateGeneralResponse(userInput);
+        }
+    }
+    
+    generateEmergencyResponse() {
+        return `
+        🚨 **MEDICAL EMERGENCY DETECTED** 🚨
+        
+        **CALL EMERGENCY SERVICES IMMEDIATELY:**
+        - India: 102 (Ambulance) or 108 (Emergency)
+        - Or visit the nearest emergency room
+        
+        **While waiting for help:**
+        - Stay calm and don't leave the person alone
+        - If conscious, keep them comfortable and monitor breathing
+        - Have medication bottles ready to show emergency responders
+        - Don't induce vomiting unless specifically instructed
+        
+        **Our Emergency Contact:** +91 11 2345 6789
+        
+        For non-emergency medication questions, I'm here to help after you've addressed the immediate emergency.
+        `;
+    }
+    
+    generateNavigationResponse(userInput) {
+        const input = userInput.toLowerCase();
+        let navigationCommand = '';
+        let response = '';
+        
+        if (input.includes('safety')) {
+            navigationCommand = 'NAVIGATE_TO_SAFETY';
+            response = "Taking you to our Safety Page where you'll find comprehensive medication safety guidelines, storage instructions, and emergency procedures.";
+        } else if (input.includes('dosage') || input.includes('calculator')) {
+            navigationCommand = 'NAVIGATE_TO_DOSAGE';
+            response = "Redirecting you to our Dosage Page with interactive calculators for common medications.";
+        } else if (input.includes('contact')) {
+            navigationCommand = 'NAVIGATE_TO_CONTACT';
+            response = "Opening our Contact Page with all our contact information and support options.";
+        } else if (input.includes('home')) {
+            navigationCommand = 'NAVIGATE_TO_HOME';
+            response = "Taking you back to our Home Page with an overview of all our services.";
+        } else {
+            response = `I can help you navigate to:
+            - <a href='safety.html'>Safety Page</a> - Medication safety guidelines
+            - <a href='dosage.html'>Dosage Page</a> - Dosage calculators
+            - <a href='contact.html'>Contact Page</a> - Contact information
+            - <a href='index.html'>Home Page</a> - Main overview`;
+        }
+        
+        return navigationCommand ? `${response}\n\n${navigationCommand}` : response;
+    }
+    
+    generateSafetyResponse(userInput) {
+        const kb = this.knowledgeBase.safety;
+        let response = kb.content.general + "\n\n";
+        
+        if (/storage|store/i.test(userInput)) {
+            response += "**Storage Guidelines:**\n" + kb.content.storage + "\n\n";
+        }
+        
+        if (/administration|administer/i.test(userInput)) {
+            response += "**Administration Safety:**\n" + kb.content.administration + "\n\n";
+        }
+        
+        if (/allergy|allergic/i.test(userInput)) {
+            response += "**Allergy Management:**\n" + kb.content.allergies + "\n\n";
+        }
+        
+        if (/emergency/i.test(userInput)) {
+            response += "**Emergency Procedures:**\n" + kb.content.emergency + "\n\n";
+        }
+        
+        response += `**Additional Resources:**\n${kb.resources.join('\n')}\n\n`;
+        response += `For comprehensive safety guidelines and checklists, visit our <a href='${kb.page}'>Safety Page</a>`;
+        
+        return response;
+    }
+    
+    generateDosageResponse(userInput) {
+        const kb = this.knowledgeBase.dosage;
+        let response = kb.content.general + "\n\n";
+        
+        if (/acetaminophen/i.test(userInput)) {
+            response += "**Acetaminophen Dosing:**\n" + kb.content.acetaminophen + "\n\n";
+        }
+        
+        if (/ibuprofen/i.test(userInput)) {
+            response += "**Ibuprofen Dosing:**\n" + kb.content.ibuprofen + "\n\n";
+        }
+        
+        if (/amoxicillin/i.test(userInput)) {
+            response += "**Amoxicillin Dosing:**\n" + kb.content.amoxicillin + "\n\n";
+        }
+        
+        response += "⚠️ " + kb.content.warning + "\n\n";
+        response += `**Dosage Resources:**\n${kb.resources.join('\n')}\n\n`;
+        response += `Use our interactive calculators on the <a href='${kb.page}'>Dosage Page</a>`;
+        
+        return response;
+    }
+    
+    generateContactResponse() {
+        const kb = this.knowledgeBase.contact;
+        
+        return `
+        **Contact MediCare Plus:**
+        
+        📍 **Address:** ${kb.content.address}
+        📞 **Phone:** ${kb.content.phone}
+        📧 **Email:** ${kb.content.email}
+        🕐 **Hours:** ${kb.content.hours}
+        
+        🚨 **Emergency:** ${kb.content.emergency}
+        
+        Visit our <a href='${kb.page}'>Contact Page</a> for more ways to reach us including our contact form and social media links.
+        `;
+    }
+    
+    generateDownloadsResponse() {
+        const resources = this.knowledgeBase.downloads.resources;
+        
+        let response = "**Available Downloads & Resources:**\n\n";
+        
+        resources.forEach((resource, index) => {
+            response += `${index + 1}. **${resource.name}**\n`;
+            response += `   ${resource.description}\n`;
+            response += `   ${resource.url}\n\n`;
+        });
+        
+        response += "💡 **Tip:** Right-click on links and select 'Save As' to download files to your device.\n\n";
+        response += "Need help with any of these resources? Contact us at +91 11 2345 6789";
+        
+        return response;
+    }
+    
+    generateExitResponse() {
+        const responses = this.knowledgeBase.exit.responses;
+        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+        
+        return `${randomResponse}\n\n**Quick Access Links:**\n- Emergency: 102 or 108\n- Our Support: +91 11 2345 6789\n- Email: info@medicareplus.com`;
+    }
+    
+    generateGeneralResponse(userInput) {
+        return `
+        Hello! I'm your MediCare Plus AI Assistant. I can help you with:
+        
+        🛡️ **Medication Safety** - Storage, administration, allergy management
+        💊 **Dosage Information** - Calculators and guidelines for common medications  
+        📞 **Contact Information** - How to reach our support team
+        📥 **Downloads** - Helpful resources, checklists, and forms
+        
+        **Popular Questions:**
+        - "How should I store my medications?"
+        - "What's the right dosage for acetaminophen?"
+        - "Show me all available downloads"
+        - "How can I contact support?"
+        
+        What would you like to know about? I'm here to help with your healthcare questions!
+        
+        ⚠️ **Important:** For medical emergencies, call 102 immediately. This assistant provides general information and should not replace professional medical advice.
+        `;
+    }
+}
+
+// Usage function for your existing system
+   function getWebsiteContext() {
+    const aiAssistant = new MediCarePlusAI();
+    
+    return {
+        // Your existing context function enhanced
+        generateResponse: function(userInput) {
+            return aiAssistant.generateResponse(userInput);
+        },
+        
+        // Additional utility functions
+        getDownloadLinks: function() {
+            return aiAssistant.generateDownloadsResponse();
+        },
+        
+        getContactInfo: function() {
+            return aiAssistant.generateContactResponse();
+        },
+        
+        handleExit: function() {
+            return aiAssistant.generateExitResponse();
+        }
+    };
+}
 
             // Enter key support for chat
             const chatInput = document.getElementById('chatInput');
