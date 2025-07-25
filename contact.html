@@ -382,9 +382,9 @@
             const currentHost = window.location.hostname;
             
             // Highlight the active navigation link based on the current page
-            const currentPage = window.location.pathname.split('/').pop(); // e.g., "contact.html"
+            const currentPage = window.location.pathname.split('/').pop(); // e.g., "index.html"
             document.querySelectorAll('.nav-link').forEach(link => {
-                if (link.getAttribute('href') === currentPage || (currentPage === '' && link.getAttribute('href') === 'contact.html')) {
+                if (link.getAttribute('href') === currentPage || (currentPage === '' && link.getAttribute('href') === 'index.html')) {
                     link.classList.add('active');
                 } else {
                     link.classList.remove('active');
@@ -711,7 +711,7 @@
                 }
             }
 
-           // Enhanced MediCare Plus AI Assistant with Intelligent Pattern Matching
+               // Enhanced MediCare Plus AI Assistant with Intelligent Pattern Matching
 function getWebsiteContext() {
     // UPDATED: Enhanced context with better search patterns and link formatting
     return `
@@ -803,7 +803,7 @@ function getWebsiteContext() {
 
     Remember: The JavaScript will automatically format all links to show full URLs, so focus on providing the right content and appropriate link references.
     `;
-
+}
             // Enter key support for chat
             const chatInput = document.getElementById('chatInput');
             if (chatInput) { // Added null check
